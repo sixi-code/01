@@ -1,3 +1,4 @@
+//电源控制引脚初始化
 #include "stm32f4xx.h"
 #include "variables.h"
 
@@ -210,6 +211,7 @@ void USB_Slave_Host_Ctrl(uint8_t status){
 }
 
 void Pin_Ctrl_Init(void){
+    //初始化所有引脚
     Battery_Ischarging_Pin_Init();
     Power_Maintain_Pin_Init();
     Speaker_Power_Pin_Init();
