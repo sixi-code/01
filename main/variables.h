@@ -12,4 +12,8 @@ extern volatile uint8_t g_key_R_M_RT; // 0: 右摇杆未在中间位置, 1: 右�
 
 extern RTC_DateTypeDef now_date; // 当前日期 (RTC)
 extern RTC_TimeTypeDef now_time; // 当前时间 (RTC)
+
+extern volatile uint8_t g_pwm_inited; // PWM是否初始化完成标志 0：未初始化，1：已初始化
+
+extern volatile uint8_t g_max98357_inited; // MAX98357A（喇叭）是否初始化标志 0：未初始化，1：已初始化
 #endif // __VARIABLES_H__

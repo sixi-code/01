@@ -11,3 +11,7 @@ volatile uint8_t g_key_WKP_RT = 0; // 0: 唤醒按键未按下, 1: 唤醒按键�
 
 RTC_DateTypeDef now_date; // 当前日期 (RTC)
 RTC_TimeTypeDef now_time; // 当前时间 (RTC)
+
+volatile uint8_t g_pwm_inited = 0; // LCD PWM是否初始化完成标志 0：未初始化，1：已初始化
+
+volatile uint8_t g_max98357_inited = 0; // MAX98357A（喇叭）是否初始化 0：未初始化，1：已初始化
