@@ -1,21 +1,24 @@
 #include "rng.h"
 #include "variables.h"
 
+// RNG初始化
 void RNG_Init(void)
-{   // RNG初始化
+{
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_RNG, ENABLE);
     RNG_Cmd(ENABLE);
 }
 
+// 获取指定范围的真实随机数 (基于硬件RNG，每次都变)
 uint32_t RNG_GetRandomRange(uint32_t min, uint32_t max)
-{   // 获取指定范围的真实随机数 (基于硬件RNG，每次都变)
+{
     while(RNG_GetFlagStatus(RNG_FLAG_DRDY) == RESET);
     uint32_t random = RNG_GetRandomNumber();
     return min + (random % (max - min + 1));
 }
 
+// 获取指定范围的固定随机数 (基于当前日期和范围，条件不变结果绝对不变)
 uint32_t RNG_GetFixedRandomByDate(uint32_t min, uint32_t max)
-{   // 新增：获取指定范围的固定随机数 (基于当前日期和范围，条件不变结果绝对不变)
+{
     if (min>max)
     {
         uint32_t temp = min;

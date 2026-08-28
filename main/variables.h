@@ -16,4 +16,6 @@ extern RTC_TimeTypeDef now_time; // 当前时间 (RTC)
 extern volatile uint8_t g_pwm_inited; // PWM是否初始化完成标志 0：未初始化，1：已初始化
 
 extern volatile uint8_t g_max98357_inited; // MAX98357A（喇叭）是否初始化标志 0：未初始化，1：已初始化
+
+extern volatile uint32_t RTOS_OK; // FreeRTOS调度器状态 0：未启动，1：已启动
 #endif // __VARIABLES_H__
