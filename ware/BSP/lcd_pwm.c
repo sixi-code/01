@@ -5,8 +5,9 @@ uint16_t PWM_PSC = 60;     // 预分频值
 uint16_t PWM_ARR = 1400;   // 自动重装载值
 
 
+// 屏幕背光PWM初始化
 void LCD_TIM8_PWM_Init(void)
-{   //屏幕背光PWM初始化
+{
 
     //配置GPIOC的时钟
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
@@ -44,8 +45,9 @@ void LCD_TIM8_PWM_Init(void)
     g_pwm_inited = 1;//标志位，PWM初始化完成
 }
 
+// 关闭PWM，并配置引脚为推挽输出低电平
 void LCD_PWM_DeInit(void)
-{   //关闭PWM，并配置引脚为推挽输出低电平
+{
     TIM_Cmd(TIM8, DISABLE);
     TIM_CtrlPWMOutputs(TIM8, DISABLE);
     GPIO_InitTypeDef GPIO_InitStruct;
@@ -61,14 +63,16 @@ void LCD_PWM_DeInit(void)
     g_pwm_inited = 0;//标志位，PWM未初始化
 }
 
+// 设置PWM占空比,设置背光亮度
 void LCD_PWM_SetDutyCycle(uint16_t duty)
-{   //设置PWM占空比,设置背光亮度
+{
     //duty:0~256 实际最大值280
     TIM8->CCR1 = 5 * (duty+5); //设置TIM8的通道1的比较寄存器的值，从而改变PWM的占空比
 }
 
+// 设置PWM频率
 void LCD_PWM_SetFrequency(uint16_t frequency)
-{   //设置PWM频率
+{
     //frequency:1~60k
     TIM8->PSC = (60000 / frequency) - 1; //设置TIM8的预分频值，从而改变PWM的频率
-}    
+}

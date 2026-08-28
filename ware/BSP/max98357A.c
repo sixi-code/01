@@ -3,14 +3,16 @@
 #include "variables.h"
 #include "pin_ctrl.h"
 
+// 初始化MAX98357A（喇叭）供电
 void MAX98357_Init(void)
-{	//初始化MAX98357A（喇叭）供电
+{
 	Speaker_Power_Ctrl(1);
 	g_max98357_inited = 1;
 }
 
+// 关闭MAX98357A（喇叭）供电
 void MAX98357_Deinit(void)
-{	//关闭MAX98357A（喇叭）供电
+{
 	Speaker_Power_Ctrl(0);
 	g_max98357_inited = 0;
 }

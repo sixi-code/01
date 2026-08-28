@@ -3,8 +3,9 @@
 #include "pin_ctrl.h"
 #include "variables.h"
 
+// 初始化唤醒按键
 void Wakeup_Key_Init(void) 
-{   // 初始化唤醒按键
+{
     // 检查是否从Standby模式唤醒
     if (PWR_GetFlagStatus(PWR_FLAG_SB) != RESET) 
     {
@@ -20,8 +21,9 @@ void Wakeup_Key_Init(void)
     GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
+// 进入待机模式
 void Enter_Standby_Mode(void)
-{   // 进入待机模式
+{
     Speaker_Power_Ctrl(0);
     Headphone_Power_Ctrl(0);
 
@@ -31,13 +33,15 @@ void Enter_Standby_Mode(void)
     PWR_EnterSTANDBYMode(); // 进入Standby模式
 }
 
+// 读取唤醒按键状态
 void Read_Wakeup_Key(void)
-{   // 读取唤醒按键状态
+{
     g_key_WKP_RT = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);
 }
  
+// 初始化摇杆中间位置检测
 void Joystick_Middle_Init(void) 
-{   // 初始化摇杆中间位置检测
+{
     GPIO_InitTypeDef GPIO_InitStructure;
     //PB2 左摇杆中间位置检测, PC2 右摇杆中间位置检测
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -52,8 +56,9 @@ void Joystick_Middle_Init(void)
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
+// 获取摇杆中间位置状态
 void Get_Joystick_Middle(void) 
-{   // 获取摇杆中间位置状态
+{
     g_key_L_M_RT = GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_2) ? 0 : 1; // 左摇杆中间位置检测
     g_key_R_M_RT = GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2) ? 0 : 1; // 右摇杆中间位置检测
 }
