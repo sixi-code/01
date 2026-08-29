@@ -4,6 +4,7 @@
 #include "variables.h"
 
 #define MCU_CLK_SPD_MHZ 168
+extern void xPortSysTickHandler(void);
 // systick中断服务函数
 void SysTick_Handler(void)
 {
@@ -22,7 +23,7 @@ void SysTick_Handler(void)
 // 初始化系统滴答定时器
 void Systick_init(void)
 {
-    SysTick->val=0;
+    SysTick->VAL=0;//清空计数器,防止第一次中断延时过长
     uint32_t reload;
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);	/* SYSTICK使用外部时钟源,频率为HCLK */
     reload = MCU_CLK_SPD_MHZ*1000000/configTICK_RATE_HZ;/* 根据delay_ostickspersec设定溢出时间,reload为24位寄存器*/
