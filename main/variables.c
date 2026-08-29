@@ -19,3 +19,16 @@ RTC_TimeTypeDef now_time; // 当前时间 (RTC)
 volatile uint8_t g_pwm_inited = 0; // LCD PWM是否初始化完成标志 0：未初始化，1：已初始化
 //max98357.c
 volatile uint8_t g_max98357_inited = 0; // MAX98357A（喇叭）是否初始化 0：未初始化，1：已初始化
+//adc.c
+volatile uint8_t g_adc_dma_finished = 0; // ADC DMA传输完成标志 0：未完成，1：已完成
+volatile uint16_t g_slave_cc1_value = 0; // Type-C Slave CC1电压值 (ADC采样值)
+volatile uint16_t g_slave_cc2_value = 0; // Type-C Slave CC2电压值 (ADC采样值)
+volatile uint16_t g_host_cc1_value = 0;  // Type-C Host CC1电压值 (ADC采样值)
+volatile uint16_t g_host_cc2_value = 0;  // Type-C Host CC2电压值 (ADC采样值)
+volatile uint8_t g_usb_status = 0; // Type-C连接状态: 0=未连接 1=CtoC空闲 2=AtoC空闲 3=AtoC设备模式 4=CtoC设备模式 5=直接主机模式 6=CtoC主机模式
+volatile float g_battery_voltage = 0.0f; // 电池电压 (单位: V)
+
+volatile int16_t g_key_L_X = 0; // 左摇杆 X 轴
+volatile int16_t g_key_L_Y = 0; // 左摇杆 Y 轴
+volatile int16_t g_key_R_X = 0; // 右摇杆 X 轴
+volatile int16_t g_key_R_Y = 0; // 右摇杆 Y 轴
