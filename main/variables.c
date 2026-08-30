@@ -3,7 +3,9 @@
 #include "semphr.h"
 #include "lunar.h"
 //freertos相关
-volatile uint32_t RTOS_OK = 0; // FreeRTOS调度器状态 0：未启动，1：已启动
+SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
+SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
+
 //pin_ctrl.c
 volatile uint8_t g_charge_status = 0; // 0: 未充电, 1: 充电中, 2: 充电完成
 volatile uint8_t g_vbus_status = 0;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
@@ -33,6 +35,8 @@ volatile int16_t g_key_L_X = 0; // 左摇杆 X 轴
 volatile int16_t g_key_L_Y = 0; // 左摇杆 Y 轴
 volatile int16_t g_key_R_X = 0; // 右摇杆 X 轴
 volatile int16_t g_key_R_Y = 0; // 右摇杆 Y 轴
+//systick_conf.c
+volatile uint32_t RTOS_OK = 0; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
 volatile uint8_t RTC_HFmt = 0;  //0-24 1-12 时间格式 1：12小时制 0：24小时制
 volatile uint8_t RTC_Week = 7;  //1-7 星期
