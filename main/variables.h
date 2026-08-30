@@ -1,10 +1,14 @@
 #include "lunar.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "stm32f4xx.h"
 
 #ifndef __VARIABLES_H__
 #define __VARIABLES_H__
 // 全局变量声明
 // FreeRTOS相关
-extern volatile uint32_t RTOS_OK; // FreeRTOS调度器状态 0：未启动，1：已启动
+extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
+extern SemaphoreHandle_t xFlashSemaphore; // w25q128计数型信号量
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
@@ -33,6 +37,8 @@ extern volatile int16_t g_key_L_X; // 左摇杆 X 轴
 extern volatile int16_t g_key_L_Y; // 左摇杆 Y 轴
 extern volatile int16_t g_key_R_X; // 右摇杆 X 轴
 extern volatile int16_t g_key_R_Y; // 右摇杆 Y 轴
+//systick_conf.c
+extern volatile uint32_t RTOS_OK; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
 extern volatile uint8_t RTC_HFmt;  //0-24 1-12
 extern volatile uint8_t RTC_Week;  //1-7
