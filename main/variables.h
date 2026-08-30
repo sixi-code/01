@@ -1,3 +1,5 @@
+#include "lunar.h"
+
 #ifndef __VARIABLES_H__
 #define __VARIABLES_H__
 // 全局变量声明
@@ -31,4 +33,19 @@ extern volatile int16_t g_key_L_X; // 左摇杆 X 轴
 extern volatile int16_t g_key_L_Y; // 左摇杆 Y 轴
 extern volatile int16_t g_key_R_X; // 右摇杆 X 轴
 extern volatile int16_t g_key_R_Y; // 右摇杆 Y 轴
+//rtc_clock.h
+extern volatile uint8_t RTC_HFmt;  //0-24 1-12
+extern volatile uint8_t RTC_Week;  //1-7
+extern volatile uint8_t RTC_Year;  //0-99
+extern volatile uint8_t RTC_Moth;  //1-12
+extern volatile uint8_t RTC_Date;  //1-31
+extern volatile uint8_t RTC_Hour;  //0-24
+extern volatile uint8_t RTC_Mint;  //0-60
+extern volatile uint8_t RTC_Secd;  //0-60
+
+extern RTC_DateTypeDef now_date;//RTC_WeekDay  RTC_Month  RTC_Date  RTC_Year
+extern RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
+
+
+extern Lunar_t now_lunar; //农历
 #endif // __VARIABLES_H__
