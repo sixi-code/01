@@ -1,6 +1,7 @@
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "lunar.h"
 //freertos相关
 volatile uint32_t RTOS_OK = 0; // FreeRTOS调度器状态 0：未启动，1：已启动
 //pin_ctrl.c
@@ -32,3 +33,16 @@ volatile int16_t g_key_L_X = 0; // 左摇杆 X 轴
 volatile int16_t g_key_L_Y = 0; // 左摇杆 Y 轴
 volatile int16_t g_key_R_X = 0; // 右摇杆 X 轴
 volatile int16_t g_key_R_Y = 0; // 右摇杆 Y 轴
+//rtc_clock.h
+volatile uint8_t RTC_HFmt = 0;  //0-24 1-12 时间格式 1：12小时制 0：24小时制
+volatile uint8_t RTC_Week = 7;  //1-7 星期
+volatile uint8_t RTC_Year = 27; //0-99 年
+volatile uint8_t RTC_Moth = 8;  //1-12 月
+volatile uint8_t RTC_Date = 30; //1-31 日
+volatile uint8_t RTC_Hour = 16; //0-24 小时
+volatile uint8_t RTC_Mint = 00; //0-60 分钟
+volatile uint8_t RTC_Secd = 0;  //0-60 秒
+
+RTC_DateTypeDef now_date;//RTC_WeekDay  RTC_Month  RTC_Date  RTC_Year
+RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
+Lunar_t now_lunar; //农历
