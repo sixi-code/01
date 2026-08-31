@@ -10,6 +10,10 @@
 #define TYPEC_IS_HOST 5 //host:4076+500     	device:2+2          // 直接作为主机连接
 #define TYPEC_CC_HOST 6 //host:500+120      	device:2+2          // 通过CtoC线缆作为主机连接
 
-
+//定义 LCD 使用者标识
+#define LCD_USER_LVGL (1 << 0)// LVGL图形库
+#define LCD_USER_DISP (1 << 1)// 显示器
+#define LCD_USER_MDIA (1 << 2)// 媒体播放器
+#define LCD_USER_GAME (1 << 3)// 游戏
 
 #endif // __DEFINES_H

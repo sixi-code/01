@@ -1,7 +1,9 @@
 #include "lunar.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "event_groups.h"
 #include "stm32f4xx.h"
+
 
 #ifndef __VARIABLES_H__
 #define __VARIABLES_H__
@@ -9,6 +11,7 @@
 // FreeRTOS相关
 extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
 extern SemaphoreHandle_t xFlashSemaphore; // w25q128计数型信号量
+extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
@@ -54,4 +57,6 @@ extern RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 
 
 extern Lunar_t now_lunar; //农历
+
+extern volatile uint8_t g_lcd_user; // 当前LCD使用者标识
 #endif // __VARIABLES_H__
