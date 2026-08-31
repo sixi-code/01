@@ -7,7 +7,9 @@
 //freertos相关
 SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
 SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
+SemaphoreHandle_t xI2SSemaphore = NULL;//music dma 传输完成信号量
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
+
 
 //pin_ctrl.c
 volatile uint8_t g_charge_status = 0; // 0: 未充电, 1: 充电中, 2: 充电完成
