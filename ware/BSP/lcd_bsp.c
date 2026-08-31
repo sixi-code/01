@@ -4,7 +4,7 @@
 #include "defines.h"
 #include "variables.h"
 
-#define USE_HORIZONTAL 1 //屏幕方向 0-竖屏 1-横屏
+#define USE_HORIZONTAL 1 //屏幕方向 0-竖屏 1-横屏 2-竖屏翻转 3-横屏翻转
 
 #define LCD_W 240 //屏幕宽度
 #define LCD_H 240//屏幕高度

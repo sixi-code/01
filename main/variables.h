@@ -11,6 +11,7 @@
 // FreeRTOS相关
 extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
 extern SemaphoreHandle_t xFlashSemaphore; // w25q128计数型信号量
+extern SemaphoreHandle_t xI2SSemaphore; // music dma 传输完成信号量
 extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
