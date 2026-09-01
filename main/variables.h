@@ -13,6 +13,7 @@ extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
 extern SemaphoreHandle_t xFlashSemaphore; // w25q128计数型信号量
 extern SemaphoreHandle_t xI2SSemaphore; // music dma 传输完成信号量
 extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
+extern SemaphoreHandle_t xIICMutex; // iic互斥锁
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
@@ -60,4 +61,9 @@ extern RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 extern Lunar_t now_lunar; //农历
 
 extern volatile uint8_t g_lcd_user; // 当前LCD使用者标识
+// es9018k2m.c
+extern volatile uint8_t g_es9018_inited;     // ES9018初始化标志
+extern volatile uint8_t music_bitdepth;      // 音频位深 16/24/32
+extern volatile uint8_t kv_hdp_value;        // 耳机音量 (0-255)
+extern volatile uint8_t kv_es9018_volume;    // ES9018 DAC 音量缓存
 #endif // __VARIABLES_H__

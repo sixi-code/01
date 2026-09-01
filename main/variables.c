@@ -8,6 +8,7 @@
 SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
 SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
 SemaphoreHandle_t xI2SSemaphore = NULL;//music dma 传输完成信号量
+SemaphoreHandle_t xIICMutex = NULL;//iic互斥锁
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
 
 
@@ -57,3 +58,8 @@ RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 Lunar_t now_lunar; //农历
 //lcd_bsp.c
 volatile uint8_t g_lcd_user = LCD_USER_LVGL;// 当前LCD使用者标识
+// es9018k2m.c
+volatile uint8_t g_es9018_inited = 0;     // ES9018初始化标志
+volatile uint8_t music_bitdepth = 24;      // 音频位深 16/24/32
+volatile uint8_t kv_hdp_value = 128;       // 耳机音量 (0-255)
+volatile uint8_t kv_es9018_volume = 128;   // ES9018 DAC 音量缓存
