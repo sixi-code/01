@@ -53,8 +53,9 @@
 #define IIC_SDA_READ() GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)// 读取SDA引脚电平
 
 static ES9018_State_t  s_es9018_state = {0};// ES9018芯片状态结构体 
-static ES9018_Config_t s_es9018_config_new = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0};// ES9018配置参数结构体 (原 ES9018_Status)
-static ES9018_Config_t s_es9018_config_old = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0};// ES9018配置参数结构体 (原 ES9018_Status)
+static const ES9018_Config_t s_es9018_config_default = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0};// ES9018默认配置
+static ES9018_Config_t s_es9018_config_new = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0};// ES9018新配置参数结构体
+static ES9018_Config_t s_es9018_config_old = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0};// ES9018旧配置参数结构体
 static volatile uint8_t s_settings_changed = 0;// 标记配置参数是否发生变化 (0-未变化, 1-已变化)
 
 //IIC锁(等待互斥信号量)
@@ -570,85 +571,108 @@ uint8_t ES9018_Update_Register(void)
 {
     if(!g_es9018_inited) return ES9018_ERR_NOT_WORKING;
 
-    uint8_t res = ES9018_OK;
+    uint8_t res;
     
-    if(s_settings_changed)
-    {
-        if(s_es9018_config_old.Automute_Time != s_es9018_config_new.Automute_Time) {
-            res = ES9018_Reg4_Set_AutoMute_Time(s_es9018_config_new.Automute_Time);
-            s_es9018_config_old.Automute_Time = s_es9018_config_new.Automute_Time;
-        }
-        
-        if(s_es9018_config_old.Enable_Loopback != s_es9018_config_new.Enable_Loopback || 
-           s_es9018_config_old.Automute_Level != s_es9018_config_new.Automute_Level) {
-            res = ES9018_Reg5_Set_AutoMute_Level(s_es9018_config_new.Enable_Loopback, s_es9018_config_new.Automute_Level);
-            s_es9018_config_old.Enable_Loopback = s_es9018_config_new.Enable_Loopback;
-            s_es9018_config_old.Automute_Level = s_es9018_config_new.Automute_Level;
-        }
-        
-        if(s_es9018_config_old.Vol_Rate != s_es9018_config_new.Vol_Rate) {
-            res = ES9018_Reg6_DeEmphasis(s_es9018_config_new.Vol_Rate);
-            s_es9018_config_old.Vol_Rate = s_es9018_config_new.Vol_Rate;
-        }
-        
-        if(s_es9018_config_old.Filter_Shape != s_es9018_config_new.Filter_Shape ||
-           s_es9018_config_old.IIR_BW != s_es9018_config_new.IIR_BW ||
-           s_es9018_config_old.Mute_Ch1 != s_es9018_config_new.Mute_Ch1 ||
-           s_es9018_config_old.Mute_Ch2 != s_es9018_config_new.Mute_Ch2) {
-            res = ES9018_Reg7_General_Set(s_es9018_config_new.Filter_Shape, s_es9018_config_new.IIR_BW, s_es9018_config_new.Mute_Ch1, s_es9018_config_new.Mute_Ch2);
-            s_es9018_config_old.Filter_Shape = s_es9018_config_new.Filter_Shape;
-            s_es9018_config_old.IIR_BW = s_es9018_config_new.IIR_BW;
-            s_es9018_config_old.Mute_Ch1 = s_es9018_config_new.Mute_Ch1;
-            s_es9018_config_old.Mute_Ch2 = s_es9018_config_new.Mute_Ch2;
-        }
-        
-        if(s_es9018_config_old.Stop_Div != s_es9018_config_new.Stop_Div) {
-            res = ES9018_Reg10_Master_Mode_Control(s_es9018_config_new.Stop_Div);
-            s_es9018_config_old.Stop_Div = s_es9018_config_new.Stop_Div;
-        }
-        
-        if(s_es9018_config_old.Sel_Ch1 != s_es9018_config_new.Sel_Ch1 || 
-           s_es9018_config_old.Sel_Ch2 != s_es9018_config_new.Sel_Ch2) {
-            res = ES9018_Reg11_Channel_Mapping(s_es9018_config_new.Sel_Ch1, s_es9018_config_new.Sel_Ch2);
-            s_es9018_config_old.Sel_Ch1 = s_es9018_config_new.Sel_Ch1;
-            s_es9018_config_old.Sel_Ch2 = s_es9018_config_new.Sel_Ch2;
-        }
-        
-        if(s_es9018_config_old.DPLL_BW != s_es9018_config_new.DPLL_BW) {
-            res = ES9018_Reg12_DPLL_Setting(s_es9018_config_new.DPLL_BW);
-            s_es9018_config_old.DPLL_BW = s_es9018_config_new.DPLL_BW;
-        }
-        
-        if(s_es9018_config_old.Bypass_THD != s_es9018_config_new.Bypass_THD) {
-            res = ES9018_Reg13_THD_Compensation(s_es9018_config_new.Bypass_THD);
-            s_es9018_config_old.Bypass_THD = s_es9018_config_new.Bypass_THD;
-        }
-        
-        if(s_es9018_config_old.Mute_Lock != s_es9018_config_new.Mute_Lock || 
-           s_es9018_config_old.OutL_Lock != s_es9018_config_new.OutL_Lock) {
-            res = ES9018_Reg14_Soft_Start_Setting(s_es9018_config_new.Mute_Lock, s_es9018_config_new.OutL_Lock);
-            s_es9018_config_old.Mute_Lock = s_es9018_config_new.Mute_Lock;
-            s_es9018_config_old.OutL_Lock = s_es9018_config_new.OutL_Lock;
-        }
-        
-        if(s_es9018_config_old.Bypass_IIR != s_es9018_config_new.Bypass_IIR) {
-            res = ES9018_Reg21_Bypass_OSF_IIR(s_es9018_config_new.Bypass_IIR);
-            s_es9018_config_old.Bypass_IIR = s_es9018_config_new.Bypass_IIR;
-        }
-        
-        if(s_es9018_config_old.C2 != s_es9018_config_new.C2) {
-            res = ES9018_Reg22_23_THD_Comp_C2(s_es9018_config_new.C2);
-            s_es9018_config_old.C2 = s_es9018_config_new.C2;
-        }
-        
-        if(s_es9018_config_old.C3 != s_es9018_config_new.C3) {
-            res = ES9018_Reg24_25_THD_Comp_C3(s_es9018_config_new.C3);
-            s_es9018_config_old.C3 = s_es9018_config_new.C3;
-        }
-        
-        s_settings_changed = 0;
+    if(!s_settings_changed) return ES9018_OK;
+    
+    // 1. 自动静音时间
+    if(s_es9018_config_old.Automute_Time != s_es9018_config_new.Automute_Time) {
+        res = ES9018_Reg4_Set_AutoMute_Time(s_es9018_config_new.Automute_Time);
+        if(res) { return res; }
+        s_es9018_config_old.Automute_Time = s_es9018_config_new.Automute_Time;
     }
-    return res;
+    
+    // 2. 自动静音电平 + 环回
+    if(s_es9018_config_old.Enable_Loopback != s_es9018_config_new.Enable_Loopback || 
+       s_es9018_config_old.Automute_Level != s_es9018_config_new.Automute_Level) {
+        res = ES9018_Reg5_Set_AutoMute_Level(s_es9018_config_new.Enable_Loopback, s_es9018_config_new.Automute_Level);
+        if(res) { return res; }
+        s_es9018_config_old.Enable_Loopback = s_es9018_config_new.Enable_Loopback;
+        s_es9018_config_old.Automute_Level = s_es9018_config_new.Automute_Level;
+    }
+    
+    // 3. 去加重 / 音量变化速率
+    if(s_es9018_config_old.Vol_Rate != s_es9018_config_new.Vol_Rate) {
+        res = ES9018_Reg6_DeEmphasis(s_es9018_config_new.Vol_Rate);
+        if(res) { return res; }
+        s_es9018_config_old.Vol_Rate = s_es9018_config_new.Vol_Rate;
+    }
+    
+    // 4. 通用设置：滤波器 + IIR带宽 + 静音
+    if(s_es9018_config_old.Filter_Shape != s_es9018_config_new.Filter_Shape ||
+       s_es9018_config_old.IIR_BW != s_es9018_config_new.IIR_BW ||
+       s_es9018_config_old.Mute_Ch1 != s_es9018_config_new.Mute_Ch1 ||
+       s_es9018_config_old.Mute_Ch2 != s_es9018_config_new.Mute_Ch2) {
+        res = ES9018_Reg7_General_Set(s_es9018_config_new.Filter_Shape, s_es9018_config_new.IIR_BW, s_es9018_config_new.Mute_Ch1, s_es9018_config_new.Mute_Ch2);
+        if(res) { return res; }
+        s_es9018_config_old.Filter_Shape = s_es9018_config_new.Filter_Shape;
+        s_es9018_config_old.IIR_BW = s_es9018_config_new.IIR_BW;
+        s_es9018_config_old.Mute_Ch1 = s_es9018_config_new.Mute_Ch1;
+        s_es9018_config_old.Mute_Ch2 = s_es9018_config_new.Mute_Ch2;
+    }
+    
+    // 5. 主模式 / 锁定边沿数
+    if(s_es9018_config_old.Stop_Div != s_es9018_config_new.Stop_Div) {
+        res = ES9018_Reg10_Master_Mode_Control(s_es9018_config_new.Stop_Div);
+        if(res) { return res; }
+        s_es9018_config_old.Stop_Div = s_es9018_config_new.Stop_Div;
+    }
+    
+    // 6. 通道映射
+    if(s_es9018_config_old.Sel_Ch1 != s_es9018_config_new.Sel_Ch1 || 
+       s_es9018_config_old.Sel_Ch2 != s_es9018_config_new.Sel_Ch2) {
+        res = ES9018_Reg11_Channel_Mapping(s_es9018_config_new.Sel_Ch1, s_es9018_config_new.Sel_Ch2);
+        if(res) { return res; }
+        s_es9018_config_old.Sel_Ch1 = s_es9018_config_new.Sel_Ch1;
+        s_es9018_config_old.Sel_Ch2 = s_es9018_config_new.Sel_Ch2;
+    }
+    
+    // 7. DPLL 带宽
+    if(s_es9018_config_old.DPLL_BW != s_es9018_config_new.DPLL_BW) {
+        res = ES9018_Reg12_DPLL_Setting(s_es9018_config_new.DPLL_BW);
+        if(res) { return res; }
+        s_es9018_config_old.DPLL_BW = s_es9018_config_new.DPLL_BW;
+    }
+    
+    // 8. THD 补偿旁路
+    if(s_es9018_config_old.Bypass_THD != s_es9018_config_new.Bypass_THD) {
+        res = ES9018_Reg13_THD_Compensation(s_es9018_config_new.Bypass_THD);
+        if(res) { return res; }
+        s_es9018_config_old.Bypass_THD = s_es9018_config_new.Bypass_THD;
+    }
+    
+    // 9. 软启动 / 失锁处理
+    if(s_es9018_config_old.Mute_Lock != s_es9018_config_new.Mute_Lock || 
+       s_es9018_config_old.OutL_Lock != s_es9018_config_new.OutL_Lock) {
+        res = ES9018_Reg14_Soft_Start_Setting(s_es9018_config_new.Mute_Lock, s_es9018_config_new.OutL_Lock);
+        if(res) { return res; }
+        s_es9018_config_old.Mute_Lock = s_es9018_config_new.Mute_Lock;
+        s_es9018_config_old.OutL_Lock = s_es9018_config_new.OutL_Lock;
+    }
+    
+    // 10. IIR 旁路
+    if(s_es9018_config_old.Bypass_IIR != s_es9018_config_new.Bypass_IIR) {
+        res = ES9018_Reg21_Bypass_OSF_IIR(s_es9018_config_new.Bypass_IIR);
+        if(res) { return res; }
+        s_es9018_config_old.Bypass_IIR = s_es9018_config_new.Bypass_IIR;
+    }
+    
+    // 11. 二次谐波补偿系数
+    if(s_es9018_config_old.C2 != s_es9018_config_new.C2) {
+        res = ES9018_Reg22_23_THD_Comp_C2(s_es9018_config_new.C2);
+        if(res) { return res; }
+        s_es9018_config_old.C2 = s_es9018_config_new.C2;
+    }
+    
+    // 12. 三次谐波补偿系数
+    if(s_es9018_config_old.C3 != s_es9018_config_new.C3) {
+        res = ES9018_Reg24_25_THD_Comp_C3(s_es9018_config_new.C3);
+        if(res) { return res; }
+        s_es9018_config_old.C3 = s_es9018_config_new.C3;
+    }
+    
+    s_settings_changed = 0;
+    return ES9018_OK;
 }
 
 // 执行ES9018的软复位操作，将芯片寄存器恢复到默认状态
@@ -657,28 +681,11 @@ uint8_t ES9018_Soft_Reset(void)
 {
     if(!g_es9018_inited) return ES9018_ERR_NOT_WORKING;
 
-    uint8_t res = ES9018_OK;
-    res = I2C_Write_ES9018(ES9018K2M_SYSTEM_SETTING, 0x01);
+    uint8_t res = I2C_Write_ES9018(ES9018K2M_SYSTEM_SETTING, 0x01);
     if(!res)
     {
-        s_es9018_config_new.Enable_Loopback = s_es9018_config_old.Enable_Loopback = 0;
-        s_es9018_config_new.Automute_Time = s_es9018_config_old.Automute_Time = 0;
-        s_es9018_config_new.Automute_Level = s_es9018_config_old.Automute_Level = 104;
-        s_es9018_config_new.Vol_Rate = s_es9018_config_old.Vol_Rate = 2;
-        s_es9018_config_new.Filter_Shape = s_es9018_config_old.Filter_Shape = 0;
-        s_es9018_config_new.Mute_Ch1 = s_es9018_config_old.Mute_Ch1 = 0;
-        s_es9018_config_new.Mute_Ch2 = s_es9018_config_old.Mute_Ch2 = 0;
-        s_es9018_config_new.Bypass_IIR = s_es9018_config_old.Bypass_IIR = 0;
-        s_es9018_config_new.IIR_BW = s_es9018_config_old.IIR_BW = 0;
-        s_es9018_config_new.Stop_Div = s_es9018_config_old.Stop_Div = 5;
-        s_es9018_config_new.Sel_Ch1 = s_es9018_config_old.Sel_Ch1 = 0;
-        s_es9018_config_new.Sel_Ch2 = s_es9018_config_old.Sel_Ch2 = 1;
-        s_es9018_config_new.DPLL_BW = s_es9018_config_old.DPLL_BW = 5;
-        s_es9018_config_new.Bypass_THD = s_es9018_config_old.Bypass_THD = 1;
-        s_es9018_config_new.C2 = s_es9018_config_old.C2 = 0;
-        s_es9018_config_new.C3 = s_es9018_config_old.C3 = 0;
-        s_es9018_config_new.Mute_Lock = s_es9018_config_old.Mute_Lock = 0;
-        s_es9018_config_new.OutL_Lock = s_es9018_config_old.OutL_Lock = 0;
+        s_es9018_config_new = s_es9018_config_default;
+        s_es9018_config_old = s_es9018_config_default;
     }
     return res;
 }
