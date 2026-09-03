@@ -121,7 +121,7 @@ I2SxCLK=(HSE/PLLI2SM)*PLLI2SN/PLLI2SR
 */
 
 // 采样率/10,PLLI2SN（输出频率）,PLLI2SR（输出分频）,I2SDIV（主分频）,ODD（奇偶）
-#define I2S_PSC_ROW_COUNT  (sizeof(I2S_PSC_TBL) / sizeof(I2S_PSC_TBL[0]))
+#define I2S_PSC_ROW_COUNT  (sizeof(I2S_PSC_TBL) / sizeof(I2S_PSC_TBL[0]))//采样率表行数,避免硬编码/10
 const uint16_t I2S_PSC_TBL[][5]=
 {
     {800 , 256,5,12,1},        //8Khz采样率
