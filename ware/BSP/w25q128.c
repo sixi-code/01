@@ -81,9 +81,9 @@ void flash_unlock(void)
 //SPI3 读写一个字节
 uint8_t SPI3_ReadWriteByte(uint8_t TxData)
 {
-    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET) {} //等待发送
+    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET) {} //等待发送缓冲区为空(TXE=1)再写入
     SPI_I2S_SendData(SPI3, TxData);   //通过外设SPIx发送一个数据
-    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET) {} //等待接收
+    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET) {} //等待接收缓冲区非空(RXNE=1)再读取
     return SPI_I2S_ReceiveData(SPI3); //返回通过SPIx最近接收的数据        
 }
 
@@ -229,6 +229,8 @@ void DMA1_Stream0_IRQHandler(void)
 }
 
 // DMA1 Stream5中断处理函数 (SPI3_TX)
+// 与Stream0(SPI3_RX)配对:各自完成后释放计数信号量(共2个),
+// 供 SPI3_DMA_Wait_Complete() 取走,否则DMA读写会一直等待卡死
 void DMA1_Stream5_IRQHandler(void)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;// 用于判断是否需要进行任务切换
@@ -246,11 +248,11 @@ void DMA1_Stream5_IRQHandler(void)
 // 等待DMA传输完成
 void SPI3_DMA_Wait_Complete(void)
 {
-    xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);
-    xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);
+    xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);//等待RX(Sream0)传输完成
+    xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);//等待TX(Sream5)传输完成
     
     // 等待SPI传输完成
-    while(SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_BSY) == SET) {}
+    while(SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_BSY) == SET) {} //等待SPI空闲(BSY清0)
 
     // 清除DMA中断标志
     DMA_ClearITPendingBit(DMA1_Stream0,DMA_IT_HTIF0|DMA_IT_TEIF0|DMA_IT_DMEIF0|DMA_IT_FEIF0);
