@@ -1,7 +1,6 @@
-#include "stm32f4xx.h"                  // Device header
-
 #ifndef __LUNAR_H__
 #define __LUNAR_H__
+#include "stm32f4xx.h"                  // Device header
 
 //时间范围 2000.2.5 - 2099
 //节气范围 2001 - 2099

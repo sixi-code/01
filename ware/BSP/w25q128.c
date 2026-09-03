@@ -37,7 +37,7 @@
 // SPI DMA 零内存占用: 利用 DMA 关闭自增(MINC=0)实现单字节 dummy 收发
 static uint8_t spi_dummy_tx = 0xFF;  // TX dummy: always sends 0xFF (read clock)
 static uint8_t spi_dummy_rx;         // RX dummy: receives garbage (write discard)
-__attribute__((aligned(4))) uint8_t W25QXX_BUFFER[W25QXX_SECTOR_BUFF_SIZE];// 用于分块处理扇区数据 (512B)(编译器对齐4字节)
+static __attribute__((aligned(4))) uint8_t W25QXX_BUFFER[W25QXX_SECTOR_BUFF_SIZE];// 用于分块处理扇区数据 (512B)(编译器对齐4字节)
 
 #define MIN_USE_DMA_SIZE 16// 最小使用DMA的传输大小
 
@@ -81,9 +81,9 @@ void flash_unlock(void)
 //SPI3 读写一个字节
 uint8_t SPI3_ReadWriteByte(uint8_t TxData)
 {
-    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET) //等待发送
+    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET) {} //等待发送
     SPI_I2S_SendData(SPI3, TxData);   //通过外设SPIx发送一个数据
-    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET)//等待接收
+    while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET) {} //等待接收
     return SPI_I2S_ReceiveData(SPI3); //返回通过SPIx最近接收的数据        
 }
 
@@ -227,6 +227,22 @@ void DMA1_Stream0_IRQHandler(void)
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
     }
 }
+
+// DMA1 Stream5中断处理函数 (SPI3_TX)
+void DMA1_Stream5_IRQHandler(void)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;// 用于判断是否需要进行任务切换
+
+    if(DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
+    {
+        DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
+        DMA_Cmd(DMA1_Stream5, DISABLE);
+        SPI_I2S_DMACmd(SPI3, SPI_I2S_DMAReq_Tx, DISABLE);
+
+        xSemaphoreGiveFromISR(xFlashSemaphore, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+}
 // 等待DMA传输完成
 void SPI3_DMA_Wait_Complete(void)
 {
@@ -234,8 +250,8 @@ void SPI3_DMA_Wait_Complete(void)
     xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);
     
     // 等待SPI传输完成
-    while(SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_BSY) == SET)
-    
+    while(SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_BSY) == SET) {}
+
     // 清除DMA中断标志
     DMA_ClearITPendingBit(DMA1_Stream0,DMA_IT_HTIF0|DMA_IT_TEIF0|DMA_IT_DMEIF0|DMA_IT_FEIF0);
     DMA_ClearITPendingBit(DMA1_Stream5,DMA_IT_HTIF5|DMA_IT_TEIF5|DMA_IT_DMEIF5|DMA_IT_FEIF5);
@@ -380,7 +396,7 @@ void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteTo
             if(NumByteToWrite>256)pageremain=256; //一次可以写入256个字节
             else pageremain=NumByteToWrite;       //不够256个字节了
         }
-    };
+    }
 }
 
 // 擦除一个扇区 Sector_Addr:扇区地址 根据实际容量设置

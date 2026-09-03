@@ -121,6 +121,7 @@ I2SxCLK=(HSE/PLLI2SM)*PLLI2SN/PLLI2SR
 */
 
 // 采样率/10,PLLI2SN（输出频率）,PLLI2SR（输出分频）,I2SDIV（主分频）,ODD（奇偶）
+#define I2S_PSC_ROW_COUNT  (sizeof(I2S_PSC_TBL) / sizeof(I2S_PSC_TBL[0]))
 const uint16_t I2S_PSC_TBL[][5]=
 {
     {800 , 256,5,12,1},        //8Khz采样率
@@ -146,11 +147,11 @@ uint8_t I2S2_SampleRate_Set(uint32_t samplerate)
     uint32_t tempreg=0;//临时寄存器值
     samplerate/=10;//缩小10倍   
     
-    for(i=0;i<(sizeof(I2S_PSC_TBL)/10);i++)//看看改采样率是否可以支持（sizeof(I2S_PSC_TBL)/10是行数）
+    for(i=0;i<I2S_PSC_ROW_COUNT;i++)//看看改采样率是否可以支持（I2S_PSC_ROW_COUNT是行数）
         if(samplerate==I2S_PSC_TBL[i][0])break;
 
     RCC_PLLI2SCmd(DISABLE);//先关闭PLLI2S
-    if(i==(sizeof(I2S_PSC_TBL)/10))return 1;//搜遍了也找不到
+    if(i==I2S_PSC_ROW_COUNT)return 1;//搜遍了也找不到
     RCC_PLLI2SConfig((uint32_t)I2S_PSC_TBL[i][1],(uint32_t)I2S_PSC_TBL[i][2]);//配置PLLI2N参数和PLLI2R参数
  
     RCC->CR|=1<<26;                    //开启I2S时钟

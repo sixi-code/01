@@ -1,7 +1,6 @@
-#include "stm32f4xx.h"                  // Device header
-
 #ifndef __I2S_H__
 #define __I2S_H__
+#include "stm32f4xx.h"                  // Device header
 
 extern volatile uint8_t I2SdmaBuff;
 

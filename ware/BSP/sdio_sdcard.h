@@ -1,8 +1,8 @@
-#include "stm32f4xx.h" 
-
 #ifndef __SDIO_SDCARD_H__
 #define __SDIO_SDCARD_H__																			   
 		
+#include "stm32f4xx.h" 
+
 //Sdio相关标志位,拷贝自:stm32f4xx sdio.h
 #define SDIO_FLAG_CCRCFAIL                  ((uint32_t)0x00000001)
 #define SDIO_FLAG_DCRCFAIL                  ((uint32_t)0x00000002)
@@ -258,7 +258,9 @@ extern SD_CardInfo SDCardInfo;//Sd卡信息
 #define SDIO_HIGH_CAPACITY_MMC_CARD                ((uint32_t)0x00000007)     //高容量mmc卡
 
 //SDIO相关参数定义
+#ifndef NULL                                                                  //空指针
 #define NULL 0                                                                   //空指针
+#endif
 #define SDIO_STATIC_FLAGS               ((uint32_t)0x000005FF)                   //SDIO静态标志位掩码
 #define SDIO_CMD0TIMEOUT                ((uint32_t)0x00010000)                   //CMD0命令超时计数
 #define SDIO_DATATIMEOUT                ((uint32_t)0xFFFFFFFF)                   //数据超时时间

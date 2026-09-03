@@ -22,13 +22,12 @@ uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes);
 static uint8_t CardType=SDIO_STD_CAPACITY_SD_CARD_V1_1;//SD卡类型（默认为1.x卡）
 static uint32_t CSD_Tab[4],CID_Tab[4],RCA=0;		   //SD卡CSD,CID以及相对地址(RCA)数据
 static uint8_t StopCondition=0; 					   //是否发送停止传输标志位,DMA多块读写的时候用到  
-volatile SD_Error TransferError=SD_OK;				   //数据传输错误标志,DMA读写时使用	    
+static volatile SD_Error TransferError=SD_OK;				   //数据传输错误标志,DMA读写时使用	    
 SD_CardInfo SDCardInfo;								   //SD卡信息
 
-// SDIO初始化结构体
-SDIO_InitTypeDef SDIO_InitStructure;
-SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
-SDIO_DataInitTypeDef SDIO_DataInitStructure;
+// SDIO初始化结构体 (模块内私有, 避免其它工程模块重名冲突)
+static SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
+static SDIO_DataInitTypeDef SDIO_DataInitStructure;
 
 //SD_ReadDisk/SD_WriteDisk函数专用buf,当这两个函数的数据缓存区地址不是4字节对齐的时候,
 //需要用到该数组,确保数据缓存区地址是4字节对齐的.
@@ -660,12 +659,10 @@ SD_Error SD_ReadBlock(uint8_t *buf,long long addr,uint16_t blksize)
 //blksize:块大小
 //nblks:要读取的块数
 //返回值:错误状态
-__align(4) uint32_t *tempbuff;
 SD_Error SD_ReadMultiBlocks(uint8_t *buf,long long addr,uint16_t blksize,uint32_t nblks)
 {
     SD_Error errorstatus=SD_OK;
 	uint8_t power;
-	tempbuff=(uint32_t*)buf;//转换为uint32_t指针
     SDIO->DCTRL=0x0;		//数据控制寄存器清零(关DMA)   
 	if(CardType==SDIO_HIGH_CAPACITY_SD_CARD)//大容量卡
 	{
