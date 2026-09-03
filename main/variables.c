@@ -9,6 +9,8 @@ SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
 SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
 SemaphoreHandle_t xI2SSemaphore = NULL;//music dma 传输完成信号量
 SemaphoreHandle_t xIICMutex = NULL;//iic互斥锁
+SemaphoreHandle_t xSDcardMutex = NULL;//sdcard互斥锁
+SemaphoreHandle_t xSDcardSemaphore = NULL;//sdcard计数型信号量
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
 
 
@@ -63,3 +65,6 @@ volatile uint8_t g_es9018_inited = 0;     // ES9018初始化标志
 volatile uint8_t music_bitdepth = 24;      // 音频位深 16/24/32
 volatile uint8_t kv_hdp_value = 128;       // 耳机音量 (0-255)
 volatile uint8_t kv_es9018_volume = 128;   // ES9018 DAC 音量缓存
+
+//sdio_sdcard.c
+volatile uint8_t g_TFcard_inited = 0;
