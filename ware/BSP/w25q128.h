@@ -1,7 +1,6 @@
-#include "stm32f4xx.h"
-
 #ifndef __W25Q128_H__
 #define __W25Q128_H__		    
+#include "stm32f4xx.h"
 
 uint8_t W25QXX_Init(void);
 void W25QXX_Read(uint8_t* pBuffer,uint32_t ReadAddr,uint32_t NumByteToRead);   //读取flash

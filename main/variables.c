@@ -55,8 +55,6 @@ volatile uint8_t RTC_Hour = 16; //0-24 小时
 volatile uint8_t RTC_Mint = 00; //0-60 分钟
 volatile uint8_t RTC_Secd = 0;  //0-60 秒
 
-RTC_DateTypeDef now_date;//RTC_WeekDay  RTC_Month  RTC_Date  RTC_Year
-RTC_TimeTypeDef now_time;//RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 Lunar_t now_lunar; //农历
 //lcd_bsp.c
 volatile uint8_t g_lcd_user = LCD_USER_LVGL;// 当前LCD使用者标识

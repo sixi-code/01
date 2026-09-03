@@ -1,8 +1,8 @@
 //背光
 #include "stm32f4xx.h"
 #include "variables.h"
-uint16_t PWM_PSC = 60;     // 预分频值
-uint16_t PWM_ARR = 1400;   // 自动重装载值
+static uint16_t PWM_PSC = 60;     // 预分频值
+static uint16_t PWM_ARR = 1400;   // 自动重装载值
 
 
 // 屏幕背光PWM初始化

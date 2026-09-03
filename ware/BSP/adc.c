@@ -111,6 +111,14 @@ void ADC1_DMA_Init(void)
 #define ADC_THR_RD_3A_MAX    2600  // 判定 3.0A供电 (最高2.04V) 的上限  2600/4095 * 3.3V ≈ 2.04V
 #define ADC_THR_OPEN_MIN     3500  // 判定 开路/悬空状态的下限  3500/4095 * 3.3V ≈ 2.88V
 
+// 摇杆限幅及死区处理 (原地修改输入值)
+static inline void limit_and_deadzone(int16_t *val)
+{
+    if (*val > 127) *val = 127;
+    else if (*val < -128) *val = -128;
+    if (*val < 20 && *val > -20) *val = 0;
+}
+
 // 获取Type-C状态
 void Get_TypeC_Status(void)
 {
@@ -236,18 +244,11 @@ void ADC_Calculate_Voltage(void)
     temp_RX = (int16_t)((adc_value[5] * vdda_real_factor - 2048) / 8.0f);
     temp_RY = (int16_t)((2048 - adc_value[6] * vdda_real_factor) / 8.0f);
     
-    // 摇杆限幅及死区优化 (利用连续的 if-else 减少判断)
-    #define LIMIT_AND_DEADZONE(val) \
-        do { \
-            if (val > 127) val = 127; \
-            else if (val < -128) val = -128; \
-            if (val < 20 && val > -20) val = 0; \
-        } while(0)
-
-    LIMIT_AND_DEADZONE(temp_LX);
-    LIMIT_AND_DEADZONE(temp_LY);
-    LIMIT_AND_DEADZONE(temp_RX);
-    LIMIT_AND_DEADZONE(temp_RY);
+    // 摇杆限幅及死区处理
+    limit_and_deadzone(&temp_LX);
+    limit_and_deadzone(&temp_LY);
+    limit_and_deadzone(&temp_RX);
+    limit_and_deadzone(&temp_RY);
     
     // 更新全局摇杆值 (减少写入操作)
     if (temp_LX != g_key_L_X) g_key_L_X = temp_LX;

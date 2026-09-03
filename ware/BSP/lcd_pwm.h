@@ -1,7 +1,6 @@
-#include "stm32f4xx.h"                  // Device header
-
 #ifndef __LCD_PWM_H__
 #define __LCD_PWM_H__
+#include "stm32f4xx.h"                  // Device header
 
 void LCD_TIM8_PWM_Init(void);
 void LCD_PWM_DeInit(void);

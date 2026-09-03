@@ -1,6 +1,6 @@
-#include "stm32f4xx.h"                  // Device header
 #ifndef __PIN_CTRL_H__
 #define __PIN_CTRL_H__
+#include "stm32f4xx.h"                  // Device header
 
 void Pin_Ctrl_Init(void);
 void Is_Battery_Charging(void);
