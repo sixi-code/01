@@ -1,0 +1,270 @@
+#include "stm32f4xx.h"
+#include <stdlib.h>
+#include <string.h>
+#include "tlsf.h"
+#include "malloc.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "systick_conf.h"
+#include "variables.h"
+
+//warning:不能在中断中调用malloc/free函数
+//（因为具体实现中使用了信号量，信号量在中断中不可足色获取）
+
+// ===== 初始化配置 ===== 
+#define TLSF_CTRL_SIZE   (864) // TLSF 控制结构体大小
+#define TLSF_BSC_SIZE    (98 * 1024)  // BSC 池大小
+#define TLSF_CCM_SIZE    (64 * 1024 - TLSF_CTRL_SIZE * 2) // CCM 池大小 (64KB - 2 * 控制结构体大小)
+
+//0x10000000 864B（bsc控制块 放在ccm中）
+#define BSC_CTRL_ADDR 0x10000000
+//0x10000360 864B (ccm控制块 放在ccm中)
+#define CCM_CTRL_ADDR 0x10000360
+//0x100006C0 64KB - 864*2 byte (ccm池起始地址)
+#define CCM_POOL_ADDR 0x100006C0
+
+#define TLSF_S(x) __attribute__((at(x)))
+#define TLSF_A(x) __align(x)
+
+TLSF_A(32) TLSF_S(BSC_CTRL_ADDR) uint8_t tlsf_ctrl_bsc[TLSF_CTRL_SIZE];// bsc控制块
+TLSF_A(32) 						 uint8_t tlsf_pool_bsc[TLSF_BSC_SIZE];// bsc池
+
+TLSF_A(32) TLSF_S(CCM_CTRL_ADDR) uint8_t tlsf_ctrl_ccm[TLSF_CTRL_SIZE];// ccm控制块
+TLSF_A(32) TLSF_S(CCM_POOL_ADDR) uint8_t tlsf_pool_ccm[TLSF_CCM_SIZE];// ccm池
+
+tlsf_t tlsf_bsc = NULL;// bsc池句柄
+tlsf_t tlsf_ccm = NULL;// ccm池句柄
+
+pool_t bsc_pool = NULL;// bsc池
+pool_t ccm_pool = NULL;// ccm池
+
+// TLSF 初始化 
+// 返回值: 0-成功, 1： bsc池创建失败, 2：ccm池创建失败, 3：bsc池添加失败, 4：ccm池添加失败, 5：互斥锁创建失败
+uint8_t tlsf_init(void)
+{
+    tlsf_bsc = tlsf_create(tlsf_ctrl_bsc);
+    if (tlsf_bsc == NULL) return 1;
+
+    tlsf_ccm = tlsf_create(tlsf_ctrl_ccm);
+    if (tlsf_ccm == NULL) return 2;
+
+    bsc_pool = tlsf_add_pool(tlsf_bsc, tlsf_pool_bsc, TLSF_BSC_SIZE);
+    if (bsc_pool == NULL) return 3;
+
+    ccm_pool = tlsf_add_pool(tlsf_ccm, tlsf_pool_ccm, TLSF_CCM_SIZE);
+    if (ccm_pool == NULL) return 4;
+
+	xBSCMutex = xSemaphoreCreateMutex();
+	xCCMMutex = xSemaphoreCreateMutex();
+	
+	if (xBSCMutex == NULL || xCCMMutex == NULL) return 5;
+	
+    return 0;
+}
+
+volatile uint32_t g_malloc_fail_size  = 0;// 分配失败时的请求大小
+volatile uint32_t g_realloc_fail_size = 0;// 重分配失败时的请求大小
+volatile uint32_t g_realloc_fail_old  = 0;// 重分配失败时的原大小
+
+//bsc池内存分配
+//bytes:请求分配的字节数
+void *malloc_bsc(uint32_t bytes)
+{
+    void *ptr = NULL;
+
+	if(RTOS_OK) xSemaphoreTake(xBSCMutex, portMAX_DELAY);
+	ptr = tlsf_malloc(tlsf_bsc, bytes);
+	if(RTOS_OK) xSemaphoreGive(xBSCMutex);
+
+	// 调试：分配失败时死循环，方便用调试器查看调用栈和请求大小
+	if (ptr == NULL && bytes > 0) {
+		g_malloc_fail_size = bytes;
+		while(1);
+	}
+    return ptr;
+}
+
+//bsc池内存释放
+void free_bsc(void* ptr)
+{
+    if(RTOS_OK) xSemaphoreTake(xBSCMutex, portMAX_DELAY);
+    tlsf_free(tlsf_bsc, ptr);
+    if(RTOS_OK) xSemaphoreGive(xBSCMutex);
+}
+
+//bsc池内存重分配
+//ptr:原内存指针
+//bytes:请求分配的字节数
+void *realloc_bsc(void* ptr, uint32_t bytes)
+{
+    void *new_ptr = NULL;
+    uint32_t old_size = ptr ? tlsf_block_size(ptr) : 0;
+
+    if(RTOS_OK) xSemaphoreTake(xBSCMutex, portMAX_DELAY);
+	new_ptr = tlsf_realloc(tlsf_bsc, ptr, bytes);
+	if(RTOS_OK) xSemaphoreGive(xBSCMutex);
+
+	if (new_ptr == NULL && bytes > 0) {
+		g_realloc_fail_size = bytes;
+		g_realloc_fail_old  = old_size;
+		while(1);
+	}
+    return new_ptr;
+}
+
+//ccm池内存分配
+//bytes:请求分配的字节数
+void *malloc_ccm(uint32_t bytes)
+{
+    void *ptr = NULL;
+    
+	if(RTOS_OK) xSemaphoreTake(xCCMMutex, portMAX_DELAY);
+	ptr = tlsf_malloc(tlsf_ccm, bytes);
+	if(RTOS_OK) xSemaphoreGive(xCCMMutex);
+	
+    return ptr;
+}
+
+//ccm池内存释放
+//ptr:要释放的内存指针
+void free_ccm(void* ptr)
+{
+	if(RTOS_OK) xSemaphoreTake(xCCMMutex, portMAX_DELAY);
+	tlsf_free(tlsf_ccm, ptr);
+	if(RTOS_OK) xSemaphoreGive(xCCMMutex);
+}
+
+//ccm池内存重分配
+//ptr:原内存指针
+//bytes:请求分配的字节数
+void *realloc_ccm(void* ptr, uint32_t bytes)
+{
+    void *new_ptr = NULL;
+    if(RTOS_OK) xSemaphoreTake(xCCMMutex, portMAX_DELAY);
+	new_ptr = tlsf_realloc(tlsf_ccm, ptr, bytes);
+	if(RTOS_OK) xSemaphoreGive(xCCMMutex);
+    return new_ptr;
+}
+
+
+//内存遍历回调函数
+static void tlsf_mem_walker(void* ptr, size_t size, int used, void* user)
+{
+    (void)ptr;  // 未使用参数
+    
+    mem_monitor_t* mon = (mem_monitor_t*)user;
+    
+    mon->total_size += size;// 总大小累加
+    
+    if(used) {
+        // 已使用块
+        mon->used_cnt++;
+        mon->used_size += size;
+    } else {
+        // 空闲块
+        mon->free_cnt++;
+        mon->free_size += size;
+        // 记录最大的空闲块
+        if(size > mon->free_biggest_size)
+            mon->free_biggest_size = size;
+    }
+}
+
+//获取 BSC 池的内存监控信息
+//mon: 指向 mem_monitor_t 结构体的指针，用于存储监控信息
+void tlsf_monitor_bsc(mem_monitor_t* mon)
+{
+	if(RTOS_OK) xSemaphoreTake(xBSCMutex, portMAX_DELAY);
+	
+    if (mon == NULL || bsc_pool == NULL) return;
+
+    // 初始化监控数据
+    memset(mon, 0, sizeof(mem_monitor_t));
+    
+    // 遍历 BSC 池中的所有内存块
+    tlsf_walk_pool(bsc_pool, tlsf_mem_walker, mon);
+    
+    // 计算使用百分比
+    if(mon->total_size > 0) 
+		mon->used_pct = 100 - ((100U * mon->free_size) / mon->total_size);
+    else  
+		mon->used_pct = 0;
+    
+    // 计算碎片率：碎片率 = 1 - (最大空闲块 / 总空闲)
+    if(mon->free_size > 0)
+        mon->frag_pct = 100 - (mon->free_biggest_size * 100U / mon->free_size);
+    else
+        mon->frag_pct = 0;
+	
+	if(RTOS_OK) xSemaphoreGive(xBSCMutex);
+}
+
+//获取 CCM 池的内存监控信息
+//mon: 指向 mem_monitor_t 结构体的指针，用于存储监控信息
+void tlsf_monitor_ccm(mem_monitor_t* mon)
+{
+	if(RTOS_OK) xSemaphoreTake(xCCMMutex, portMAX_DELAY);
+	
+    if (mon == NULL || ccm_pool == NULL) return;
+
+    // 初始化监控数据
+    memset(mon, 0, sizeof(mem_monitor_t));
+    
+    // 遍历 CCM 池中的所有内存块
+    tlsf_walk_pool(ccm_pool, tlsf_mem_walker, mon);
+
+    // 计算使用百分比
+    if(mon->total_size > 0)
+		mon->used_pct = 100 - ((100U * mon->free_size) / mon->total_size);
+    else
+        mon->used_pct = 0;
+    
+    // 计算碎片率
+    if(mon->free_size > 0)
+        mon->frag_pct = 100 - (mon->free_biggest_size * 100U / mon->free_size);
+    else
+        mon->frag_pct = 0;
+	
+	if(RTOS_OK) xSemaphoreGive(xCCMMutex);
+}
+
+
+//获取合并的内存监控信息
+void tlsf_monitor_all(mem_monitor_t* mon)
+{
+    if (mon == NULL) return;
+    
+    mem_monitor_t bsc_mon, ccm_mon;
+    
+    // 获取 BSC 池的内存监控信息
+    tlsf_monitor_bsc(&bsc_mon);
+    
+    // 获取 CCM 池的内存监控信息
+    tlsf_monitor_ccm(&ccm_mon);
+    
+    // 合并两个池的信息到 mon_total
+    memset(mon, 0, sizeof(mem_monitor_t));
+    
+    mon->total_size = bsc_mon.total_size + ccm_mon.total_size;
+    mon->free_cnt = bsc_mon.free_cnt + ccm_mon.free_cnt;
+    mon->free_size = bsc_mon.free_size + ccm_mon.free_size;
+    mon->used_cnt = bsc_mon.used_cnt + ccm_mon.used_cnt;
+    mon->used_size = bsc_mon.used_size + ccm_mon.used_size;
+    
+    // 记录最大的空闲块（比较两个池中最大的空闲块）
+    mon->free_biggest_size = (bsc_mon.free_biggest_size > ccm_mon.free_biggest_size) 
+                             ? bsc_mon.free_biggest_size : ccm_mon.free_biggest_size;
+    
+    // 计算总的使用百分比
+    if(mon->total_size > 0)
+        mon->used_pct = 100 - ((100U * mon->free_size) / mon->total_size);
+    else
+        mon->used_pct = 0;
+
+    // 计算总的碎片率
+    if(mon->free_size > 0)
+        mon->frag_pct = 100 - (mon->free_biggest_size * 100U / mon->free_size);
+    else
+        mon->frag_pct = 0;
+}
