@@ -15,6 +15,8 @@ extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
 extern SemaphoreHandle_t xIICMutex; // iic互斥锁
 extern SemaphoreHandle_t xSDcardMutex; // sdcard互斥锁
 extern SemaphoreHandle_t xSDcardSemaphore; // sdcard计数型信号量
+extern SemaphoreHandle_t xBSCMutex; // tlsf互斥锁
+extern SemaphoreHandle_t xCCMMutex; // tlsf互斥锁
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)

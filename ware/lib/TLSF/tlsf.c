@@ -26,6 +26,7 @@ static int tlsf_fls(unsigned int word)
 #define tlsf_fls_sizet tlsf_fls
 
 /* Public constants: may be modified. */
+//2^4 = 16（16字节对齐，保证DMA传输时的突发传输）
 enum tlsf_public
 {
 	SL_INDEX_COUNT_LOG2 = 4,

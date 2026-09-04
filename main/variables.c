@@ -11,6 +11,8 @@ SemaphoreHandle_t xI2SSemaphore = NULL;//music dma 传输完成信号量
 SemaphoreHandle_t xIICMutex = NULL;//iic互斥锁
 SemaphoreHandle_t xSDcardMutex = NULL;//sdcard互斥锁
 SemaphoreHandle_t xSDcardSemaphore = NULL;//sdcard计数型信号量
+SemaphoreHandle_t xBSCMutex = NULL;//tlsf bsc互斥锁
+SemaphoreHandle_t xCCMMutex = NULL;//tlsf ccm互斥锁
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
 
 
