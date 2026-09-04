@@ -159,13 +159,24 @@ void Get_TypeC_Status(void)
 // ADC计算电压值
 void ADC_Calculate_Voltage(void)
 {
+    static uint16_t s_vref_raw = 0;         // 上次VREFINT原始值
+    static float    s_vref_factor_bat = 0.0f;// 电池电压换算系数
+    static float    s_vref_factor_joy = 0.0f;// 摇杆换算系数
+
     // 读取内部参考电压校准值 (出厂校准值)
     float Vrefint = *(__IO uint16_t *)(0x1FFF7A2A);
-    
-    // 提取公共系数，减少浮点乘除法次数
-    // 注意：这里全部改为直接使用原始的 adc_value
-    float common_voltage_factor = (Vrefint * 0.0008056640625f) / adc_value[7];
-    float vdda_real_factor = Vrefint / adc_value[7]; // 摇杆使用的系数
+
+    // VREFINT通道(adc_value[7])基本恒定, 仅在变化时重算系数, 减少浮点除法;
+    // 同时避免 adc_value[7]==0(未就绪)时的除零产生 Inf
+    if (adc_value[7] != s_vref_raw && adc_value[7] != 0)
+    {
+        s_vref_raw = adc_value[7];
+        s_vref_factor_bat = (Vrefint * 0.0008056640625f) / adc_value[7];
+        s_vref_factor_joy = Vrefint / adc_value[7];
+    }
+
+    float common_voltage_factor = s_vref_factor_bat; // 提取公共系数，减少浮点乘除法次数
+    float vdda_real_factor = s_vref_factor_joy;      // 摇杆使用的系数
 
     float temp_bat_voltage;
     int16_t temp_LX, temp_LY, temp_RX, temp_RY;
