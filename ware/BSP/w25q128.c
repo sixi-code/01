@@ -287,7 +287,11 @@ void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteT
     uint16_t i, bytes_to_read;// 记录每次读取的字节数
     uint32_t current_addr = ReadAddr;// 当前读取地址
     uint32_t bytes_remaining = NumByteToRead;// 记录剩余需要读取的字节数
-    
+
+    // 一次调用内读方向固定, 只需配置一次DMA MINC(TX不复用, RX自增), 避免每块重复改写CR
+    DMA1_Stream5->CR &= ~DMA_SxCR_MINC;  // TX: 关闭内存自增，始终读 spi_dummy_tx (0xFF)
+    DMA1_Stream0->CR |= DMA_SxCR_MINC;   // RX: 开启内存自增，接收数据到 pBuffer
+
     while (bytes_remaining > 0)
     {
         bytes_to_read = (bytes_remaining > 4096) ? 4096 : bytes_remaining; // chunk to 4KB max
@@ -301,10 +305,6 @@ void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteT
         // 增加对CCM RAM的检查
         if (bytes_to_read > MIN_USE_DMA_SIZE && !IS_CCM_RAM(pBuffer + (NumByteToRead - bytes_remaining)))
         {
-            // 配置DMA: RX 自增接收数据, TX 不自增持续发送 0xFF
-            DMA1_Stream5->CR &= ~DMA_SxCR_MINC;  // TX: 关闭内存自增，始终读 spi_dummy_tx (0xFF)
-            DMA1_Stream0->CR |= DMA_SxCR_MINC;   // RX: 开启内存自增，接收数据到 pBuffer
-
             DMA1_Stream0->M0AR = (uint32_t)(pBuffer + (NumByteToRead - bytes_remaining));
             DMA1_Stream0->NDTR = bytes_to_read;
             DMA1_Stream5->M0AR = (uint32_t)&spi_dummy_tx;
