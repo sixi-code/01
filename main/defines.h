@@ -16,4 +16,73 @@
 #define LCD_USER_MDIA (1 << 2)// 媒体播放器
 #define LCD_USER_GAME (1 << 3)// 游戏
 
+//基础任务
+#define BASIC_PRIO         3
+#define BASIC_STACK_SIZE   512
+
+//LVGL任务
+#define LVGL_PRIO         2
+#define LVGL_STACK_SIZE   512
+
+//媒体任务
+#define MEDIA_PRIO         2
+#define MEDIA_STACK_SIZE   512
+
+//游戏任务
+#define GAME_PRIO         2
+#define GAME_STACK_SIZE   512
+
+//USB任务
+#define USB_PRIO          4  
+#define USB_STACK_SIZE    512
+
+//USB端点0线程 优先级5
+//USB主机PSC线程 优先级5
+
+//音乐任务
+#define MUSIC_PRIO         6
+#define MUSIC_STACK_SIZE   1024
+
+//任务管理器
+#define TASK_MANAGER_PRIO         7
+#define TASK_MANAGER_STACK_SIZE   512
+
+//启动任务
+#define START_TASK_PRIO         8
+#define START_TASK_STACK_SIZE   512
+
+//字体任务
+#define FONT_PRIO         1
+#define FONT_STACK_SIZE   512
+
+//文件操作任务 (后台文件复制/删除工作线程)
+#define FILEOP_PRIO         1
+#define FILEOP_STACK_SIZE   512
+
+//定义 RTOS 任务设置
+#define Task_N_Basic     0
+#define Task_N_LVGL      1
+#define Task_N_USB       2
+#define Task_N_Music     3
+#define Task_N_Media     4
+#define Task_N_Game      5
+#define Task_N_Font      6
+#define Task_N_FileOp    7
+
+
+//...定义任务管理器:任务状态...// (T-临时 P-持久)
+#define Task_P_Null      0 //0-空 (初始值,5后自动设置)
+#define Task_T_Creat     1 //1-创建任务
+#define Task_P_Running   2 //2-任务运行中 (1/5后自动设置)
+#define Task_T_Suspend   3 //3-挂起任务
+#define Task_P_Stop 	 4 //4-任务已挂起 (3后自动设置)
+#define Task_T_Resume 	 5 //5-恢复任务 (当任务被挂起时)
+#define Task_T_Delete    6 //6-删除任务
+
+//...定义调试模式...//
+#define Debug_Mode_None 0  // 关闭日志
+#define Debug_Mode_TSDB 1  // 暂存模式 (保存到 FlashDB)
+#define Debug_Mode_USBD 2  // 实时 USB 输出
+#define Debug_Mode_LVGL 3  // 实时 屏幕 输出
+
 #endif // __DEFINES_H
