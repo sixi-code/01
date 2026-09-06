@@ -1,6 +1,7 @@
 //电源控制引脚初始化
 #include "stm32f4xx.h"
 #include "variables.h"
+#include "kvdb_ctrl.h"
 
 
 // 充电检测引脚初始化
@@ -167,10 +168,15 @@ void I2S_Exchange_Pin_Init(void){
 // 控制I2S音频切换状态
 //   status: 0 → 输出低电平, 选择耳机输出
 //   status: 1 → 输出高电平, 选择喇叭输出
-// 注: 持久化待实现
+
 void I2S_Exchange_Ctrl(uint8_t status){
     if(status == 0) GPIO_ResetBits(GPIOB, GPIO_Pin_11);
 	else GPIO_SetBits(GPIOB, GPIO_Pin_11);
+    if (kv_hdp0_or_spk1 != status) {                          // 如果状态发生变化
+		kv_hdp0_or_spk1 = status;                              // 更新KV变量
+		kvdb_persist_mark(KV_IDX_kv_hdp0_or_spk1);             // 标记需要持久化存储
+	}
+
 }
 
 // USB向外供电引脚初始化

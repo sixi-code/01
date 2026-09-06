@@ -6,6 +6,17 @@
 #include "semphr.h"
 #include "event_groups.h"
 #include "stm32f4xx.h"
+#include "flashdb.h"
+
+
+//进出临界区保证原子性
+#define GLOBAL(...)  do { \
+    taskENTER_CRITICAL(); \
+    __VA_ARGS__;          \
+    taskEXIT_CRITICAL();  \
+} while(0)
+//GLOBAL(global_counter = 1);
+
 // 全局变量声明
 // FreeRTOS相关
 extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
@@ -76,4 +87,8 @@ extern volatile uint8_t g_font_update_state;      // 字库更新状态: 0=空�
 extern volatile uint8_t g_font_update_progress;   // 字库更新进度 0-100
 extern volatile uint8_t g_font_update_file_index; // 当前更新文件索引
 extern volatile uint8_t g_font_update_error;      // 字库更新错误码
+
+//flashdb
+extern struct fdb_kvdb kvdb;//flashdb kvdb 操作结构体
+extern struct fdb_tsdb tsdb;//flashdb tsdb 操作结构体
 #endif // __VARIABLES_H__

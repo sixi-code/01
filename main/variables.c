@@ -4,6 +4,8 @@
 #include "lunar.h"
 #include "event_groups.h"
 #include "defines.h"
+#include "flashdb.h"
+
 //freertos相关
 SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
 SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
@@ -36,6 +38,10 @@ volatile uint8_t g_pwm_inited = 0; // LCD PWM是否初始化完成标志 0：未
 volatile uint8_t g_max98357_inited = 0; // MAX98357A（喇叭）是否初始化 0：未初始化，1：已初始化
 //adc.c
 volatile uint8_t g_adc_dma_finished = 0; // ADC DMA传输完成标志 0：未完成，1：已完成
+volatile int16_t g_key_L_X = 0; // 左摇杆 X 轴
+volatile int16_t g_key_L_Y = 0; // 左摇杆 Y 轴
+volatile int16_t g_key_R_X = 0; // 右摇杆 X 轴
+volatile int16_t g_key_R_Y = 0; // 右摇杆 Y 轴
 // sdio_sdcard.c
 volatile uint8_t g_TFcard_inited = 0; // TF卡初始化标志 0=未初始化 1=已初始化
 volatile uint16_t g_slave_cc1_value = 0; // Type-C Slave CC1电压值 (ADC采样值)
@@ -45,10 +51,6 @@ volatile uint16_t g_host_cc2_value = 0;  // Type-C Host CC2电压值 (ADC采样�
 volatile uint8_t g_usb_status = 0; // Type-C连接状态: 0=未连接 1=CtoC空闲 2=AtoC空闲 3=AtoC设备模式 4=CtoC设备模式 5=直接主机模式 6=CtoC主机模式
 volatile float g_battery_voltage = 0.0f; // 电池电压 (单位: V)
 
-volatile int16_t g_key_L_X = 0; // 左摇杆 X 轴
-volatile int16_t g_key_L_Y = 0; // 左摇杆 Y 轴
-volatile int16_t g_key_R_X = 0; // 右摇杆 X 轴
-volatile int16_t g_key_R_Y = 0; // 右摇杆 Y 轴
 //systick_conf.c
 volatile uint32_t RTOS_OK = 0; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
@@ -75,5 +77,7 @@ volatile uint8_t g_font_update_progress = 0;   // 字库更新进度 0-100
 volatile uint8_t g_font_update_file_index = 0; // 当前更新文件索引
 volatile uint8_t g_font_update_error = 0;      // 字库更新错误码
 
-//sdio_sdcard.c
+//flashdb
+struct fdb_kvdb kvdb = { 0 };//flashdb kvdb 操作结构体
+struct fdb_tsdb tsdb = { 0 };//flashdb tsdb 操作结构体
 
