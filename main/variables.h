@@ -36,6 +36,10 @@ extern volatile uint8_t g_max98357_inited; // MAX98357A（喇叭）是否初始�
 //adc.c
 extern volatile uint8_t g_adc_dma_finished; // ADC DMA传输完成标志
 extern volatile uint16_t g_slave_cc1_value; // Type-C Slave CC1电压值 (ADC采样值)
+
+// sdio_sdcard.c
+extern volatile uint8_t g_TFcard_inited; // TF卡初始化标志 0=未初始化 1=已初始化
+extern volatile uint16_t g_slave_cc1_value; // Type-C Slave CC1电压值 (ADC采样值)
 extern volatile uint16_t g_slave_cc2_value; // Type-C Slave CC2电压(ADC采样值)
 extern volatile uint16_t g_host_cc1_value;  // Type-C Host CC1电压值 (ADC采样值)
 extern volatile uint16_t g_host_cc2_value;  // Type-C Host CC2电压值 (ADC采样值)
@@ -65,5 +69,9 @@ extern volatile uint8_t g_es9018_inited;     // ES9018初始化标志
 extern volatile uint8_t music_bitdepth;      // 音频位深 16/24/32
 extern volatile uint8_t kv_hdp_value;        // 耳机音量 (0-255)
 extern volatile uint8_t kv_es9018_volume;    // ES9018 DAC 音量缓存
-extern volatile uint8_t g_TFcard_inited;     // TF卡初始化标志
+// fontupd.c
+extern volatile uint8_t g_font_update_state;      // 字库更新状态: 0=空闲 1=擦除 2=写入 3=完成 0xFF=错误
+extern volatile uint8_t g_font_update_progress;   // 字库更新进度 0-100
+extern volatile uint8_t g_font_update_file_index; // 当前更新文件索引
+extern volatile uint8_t g_font_update_error;      // 字库更新错误码
 #endif // __VARIABLES_H__
