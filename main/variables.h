@@ -17,11 +17,13 @@ extern SemaphoreHandle_t xSDcardMutex; // sdcard互斥锁
 extern SemaphoreHandle_t xSDcardSemaphore; // sdcard计数型信号量
 extern SemaphoreHandle_t xBSCMutex; // tlsf互斥锁
 extern SemaphoreHandle_t xCCMMutex; // tlsf互斥锁
+extern SemaphoreHandle_t xFDBSemaphore; // flashdb互斥锁
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
 extern volatile uint8_t g_headphone_status; // 0: 耳机未插入, 1: 耳机已插入
 extern volatile uint8_t g_TFcard_status; // 0: TF卡未插入, 1: TF卡已插入
+extern volatile uint8_t kv_hdp0_or_spk1; // 0: 耳机, 1: 扬声器
 // key.c
 extern volatile uint8_t g_key_WKP_RT; // 0: 唤醒按键未按下, 1: 唤醒按键已按下
 extern volatile uint8_t g_key_L_M_RT; // 0: 左摇杆未在中间位置, 1: 左摇杆在中间位置
