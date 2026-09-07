@@ -3,10 +3,12 @@
 #include "semphr.h"
 #include "lunar.h"
 #include "event_groups.h"
+#include "es9018k2m.h"
 #include "defines.h"
 #include "flashdb.h"
 
 //freertos相关
+//互斥锁/信号量 统一定义,各自初始化
 SemaphoreHandle_t xFlashMutex = NULL;//w25q128互斥锁
 SemaphoreHandle_t xFlashSemaphore = NULL;//w25q128计数型信号量
 SemaphoreHandle_t xI2SSemaphore = NULL;//music dma 传输完成信号量
@@ -16,8 +18,20 @@ SemaphoreHandle_t xSDcardSemaphore = NULL;//sdcard计数型信号量
 SemaphoreHandle_t xBSCMutex = NULL;//tlsf bsc互斥锁
 SemaphoreHandle_t xCCMMutex = NULL;//tlsf ccm互斥锁
 SemaphoreHandle_t xFDBSemaphore = NULL;//flashdb互斥锁
+SemaphoreHandle_t xTaskManagerSemaphore = NULL;//taskmanager信号量
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
 
+//freertos所有任务句柄
+TaskHandle_t Basic_Task_handler   = NULL;
+TaskHandle_t Lvgl_Task_handler    = NULL;
+TaskHandle_t USB_Task_handler     = NULL;
+TaskHandle_t Music_Task_handler   = NULL;
+TaskHandle_t Media_Task_handler   = NULL;
+TaskHandle_t Game_Task_handler    = NULL;
+TaskHandle_t Font_Task_handler    = NULL;
+TaskHandle_t FileOp_Task_handler  = NULL;
+TaskHandle_t Start_Task_handler   = NULL;
+TaskHandle_t Task_Manager_handler = NULL;
 
 //pin_ctrl.c
 volatile uint8_t g_charge_status = 0; // 0: 未充电, 1: 充电中, 2: 充电完成
@@ -64,13 +78,16 @@ volatile uint8_t RTC_Mint = 00; //0-60 分钟
 volatile uint8_t RTC_Secd = 0;  //0-60 秒
 
 Lunar_t now_lunar; //农历
+
 //lcd_bsp.c
 volatile uint8_t g_lcd_user = LCD_USER_LVGL;// 当前LCD使用者标识
+
 // es9018k2m.c
 volatile uint8_t g_es9018_inited = 0;     // ES9018初始化标志
 volatile uint8_t music_bitdepth = 24;      // 音频位深 16/24/32
 volatile uint8_t kv_hdp_value = 128;       // 耳机音量 (0-255)
 volatile uint8_t kv_es9018_volume = 128;   // ES9018 DAC 音量缓存
+volatile ES9018_Config_t kv_es9018_cfg = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0}; // ES9018 DAC 配置
 // fontupd.c
 volatile uint8_t g_font_update_state = 0;      // 字库更新状态: 0=空闲 1=擦除 2=写入 3=完成 0xFF=错误
 volatile uint8_t g_font_update_progress = 0;   // 字库更新进度 0-100
@@ -83,3 +100,16 @@ struct fdb_tsdb tsdb = { 0 };//flashdb tsdb 操作结构体
 
 //v2p_bat.c
 volatile int8_t g_battery_percent = 0; // 电池剩余电量百分比
+
+//task manager.c
+volatile uint8_t Basic_Task_Status = Task_P_Null; // 基础任务状态
+volatile uint8_t LVGL_Task_Status = Task_P_Null; // LVGL任务状态
+volatile uint8_t USB_Task_Status = Task_P_Null; // USB任务状态
+volatile uint8_t Music_Task_Status = Task_P_Null; // 音乐任务状态
+volatile uint8_t Game_Task_Status = Task_P_Null; // 游戏任务状态
+volatile uint8_t Media_Task_Status = Task_P_Null; // 媒体任务状态
+volatile uint8_t Font_Task_Status = Task_P_Null; // 字体任务状态
+volatile uint8_t FileOp_Task_Status = Task_P_Null; // 文件操作任务状态
+
+//fontupd
+volatile uint8_t g_font_need_update = 0; // 字库是否需要更新

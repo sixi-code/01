@@ -7,6 +7,7 @@
 #include "event_groups.h"
 #include "stm32f4xx.h"
 #include "flashdb.h"
+#include "es9018k2m.h"
 
 
 //进出临界区保证原子性
@@ -22,13 +23,27 @@
 extern SemaphoreHandle_t xFlashMutex; // w25q128互斥锁
 extern SemaphoreHandle_t xFlashSemaphore; // w25q128计数型信号量
 extern SemaphoreHandle_t xI2SSemaphore; // music dma 传输完成信号量
-extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
 extern SemaphoreHandle_t xIICMutex; // iic互斥锁
 extern SemaphoreHandle_t xSDcardMutex; // sdcard互斥锁
 extern SemaphoreHandle_t xSDcardSemaphore; // sdcard计数型信号量
 extern SemaphoreHandle_t xBSCMutex; // tlsf互斥锁
 extern SemaphoreHandle_t xCCMMutex; // tlsf互斥锁
 extern SemaphoreHandle_t xFDBSemaphore; // flashdb互斥锁
+extern SemaphoreHandle_t xTaskManagerSemaphore; // taskmanager信号量
+extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
+
+// FreeRTOS所有任务句柄
+extern TaskHandle_t Basic_Task_handler;
+extern TaskHandle_t Lvgl_Task_handler;
+extern TaskHandle_t USB_Task_handler;
+extern TaskHandle_t Music_Task_handler;
+extern TaskHandle_t Media_Task_handler;
+extern TaskHandle_t Game_Task_handler;
+extern TaskHandle_t Font_Task_handler;
+extern TaskHandle_t FileOp_Task_handler;
+extern TaskHandle_t Start_Task_handler;
+extern TaskHandle_t Task_Manager_handler;
+
 // pin_ctrl.c
 extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充电完成
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
@@ -49,10 +64,6 @@ extern volatile uint8_t g_max98357_inited; // MAX98357A（喇叭）是否初始�
 //adc.c
 extern volatile uint8_t g_adc_dma_finished; // ADC DMA传输完成标志
 extern volatile uint16_t g_slave_cc1_value; // Type-C Slave CC1电压值 (ADC采样值)
-
-// sdio_sdcard.c
-extern volatile uint8_t g_TFcard_inited; // TF卡初始化标志 0=未初始化 1=已初始化
-extern volatile uint16_t g_slave_cc1_value; // Type-C Slave CC1电压值 (ADC采样值)
 extern volatile uint16_t g_slave_cc2_value; // Type-C Slave CC2电压(ADC采样值)
 extern volatile uint16_t g_host_cc1_value;  // Type-C Host CC1电压值 (ADC采样值)
 extern volatile uint16_t g_host_cc2_value;  // Type-C Host CC2电压值 (ADC采样值)
@@ -62,6 +73,8 @@ extern volatile int16_t g_key_L_X; // 左摇杆 X 轴
 extern volatile int16_t g_key_L_Y; // 左摇杆 Y 轴
 extern volatile int16_t g_key_R_X; // 右摇杆 X 轴
 extern volatile int16_t g_key_R_Y; // 右摇杆 Y 轴
+// sdio_sdcard.c
+extern volatile uint8_t g_TFcard_inited; // TF卡初始化标志 0=未初始化 1=已初始化
 //systick_conf.c
 extern volatile uint32_t RTOS_OK; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
@@ -74,14 +87,19 @@ extern volatile uint8_t RTC_Hour;  //0-24
 extern volatile uint8_t RTC_Mint;  //0-60
 extern volatile uint8_t RTC_Secd;  //0-60
 
+extern RTC_DateTypeDef now_date; //RTC_WeekDay  RTC_Month  RTC_Date  RTC_Year
+extern RTC_TimeTypeDef now_time; //RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 extern Lunar_t now_lunar; //农历
 
+//lcd_bsp.c
 extern volatile uint8_t g_lcd_user; // 当前LCD使用者标识
+
 // es9018k2m.c
 extern volatile uint8_t g_es9018_inited;     // ES9018初始化标志
 extern volatile uint8_t music_bitdepth;      // 音频位深 16/24/32
 extern volatile uint8_t kv_hdp_value;        // 耳机音量 (0-255)
 extern volatile uint8_t kv_es9018_volume;    // ES9018 DAC 音量缓存
+extern volatile ES9018_Config_t kv_es9018_cfg; // ES9018 DAC 配置
 // fontupd.c
 extern volatile uint8_t g_font_update_state;      // 字库更新状态: 0=空闲 1=擦除 2=写入 3=完成 0xFF=错误
 extern volatile uint8_t g_font_update_progress;   // 字库更新进度 0-100
@@ -94,4 +112,18 @@ extern struct fdb_tsdb tsdb;//flashdb tsdb 操作结构体
 
 //v2p_bat.c
 extern volatile int8_t g_battery_percent; // 电池剩余电量百分比
+
+//task manager.c
+extern volatile uint8_t Basic_Task_Status; // 基础任务状态
+extern volatile uint8_t LVGL_Task_Status; // LVGL任务状态
+extern volatile uint8_t USB_Task_Status; // USB任务状态
+extern volatile uint8_t Music_Task_Status; // 音乐任务状态
+extern volatile uint8_t Game_Task_Status; // 游戏任务状态
+extern volatile uint8_t Media_Task_Status; // 媒体任务状态
+extern volatile uint8_t Font_Task_Status; // 字体任务状态
+extern volatile uint8_t FileOp_Task_Status; // 文件操作任务状态
+
+//fontupd
+extern volatile uint8_t g_font_need_update; // 字库是否需要更新
+
 #endif // __VARIABLES_H__
