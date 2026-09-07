@@ -91,4 +91,7 @@ extern volatile uint8_t g_font_update_error;      // 字库更新错误码
 //flashdb
 extern struct fdb_kvdb kvdb;//flashdb kvdb 操作结构体
 extern struct fdb_tsdb tsdb;//flashdb tsdb 操作结构体
+
+//v2p_bat.c
+extern volatile int8_t g_battery_percent; // 电池剩余电量百分比
 #endif // __VARIABLES_H__
