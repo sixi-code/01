@@ -1,5 +1,32 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
+
 #include "stm32f4xx.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "TLSF.h"
+#include "variables.h"
+#include "FlashDB.h"
+#include "defines.h"
+#include "pin_ctrl.h"
+#include "key.h"
+#include "systick_conf.h"
+#include "nvic_conf.h"
+#include "adc.h"
+#include "fatfs.h"
+#include "fontupd.h"
+#include "malloc.h"
+#include "rtc_clock.h"
+#include "es9018k2m.h"
+#include "rng.h"
+#include "sdio_sdcard.h"
+#include "w25q128.h"
+#include "fal.h"
+#include "kvdb_ctrl.h"
+#include "iwdg.h"
+#include "i2s.h"
+#include "lcd_bsp.h"
+#include "task_manager.h"
 
 #endif // __MAIN_H__

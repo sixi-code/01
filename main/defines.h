@@ -79,10 +79,4 @@
 #define Task_T_Resume 	 5 //5-恢复任务 (当任务被挂起时)
 #define Task_T_Delete    6 //6-删除任务
 
-//...定义调试模式...//
-#define Debug_Mode_None 0  // 关闭日志
-#define Debug_Mode_TSDB 1  // 暂存模式 (保存到 FlashDB)
-#define Debug_Mode_USBD 2  // 实时 USB 输出
-#define Debug_Mode_LVGL 3  // 实时 屏幕 输出
-
 #endif // __DEFINES_H
