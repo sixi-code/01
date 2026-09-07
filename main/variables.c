@@ -81,3 +81,5 @@ volatile uint8_t g_font_update_error = 0;      // 字库更新错误码
 struct fdb_kvdb kvdb = { 0 };//flashdb kvdb 操作结构体
 struct fdb_tsdb tsdb = { 0 };//flashdb tsdb 操作结构体
 
+//v2p_bat.c
+volatile int8_t g_battery_percent = 0; // 电池剩余电量百分比
