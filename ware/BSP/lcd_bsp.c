@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "defines.h"
 #include "variables.h"
+#include "lv_port_disp.h"
 
 #define USE_HORIZONTAL 1 //屏幕方向 0-竖屏 1-横屏 2-竖屏翻转 3-横屏翻转
 
@@ -105,8 +106,7 @@ void LCD_GPIO_Init(void)
 }
 }
 
-// 弱存根：阶段 3 LVGL 移植层实现时会被强符号覆盖
-__weak void LCD_DMA_TransferComplete(void) {}
+
 // 等待 SPI 完全空闲（仅在切换 DC 信号前使用）
 // (既检查 TXE（传输完成标志）又检查 BSY（忙碌标志）, 确保前面的数据彻底发完)
 static inline void LCD_Wait_Idle(void) {
@@ -242,8 +242,7 @@ void DMA2_Stream5_IRQHandler(void)
         DMA_Cmd(DMA2_Stream5, DISABLE);
         SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, DISABLE);
         while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET);// 等待 SPI 总线空闲
-
-        extern void LCD_DMA_TransferComplete(void);
+        // 调用 DMA 传输完成回调函数
         if(lcd_dma_user == LCD_USER_LVGL) LCD_DMA_TransferComplete();
 		else
 		{   // 如果是其他任务发起的 DMA 传输，设置事件组标志位通知该任务传输完成
