@@ -68,6 +68,7 @@ extern volatile uint16_t g_slave_cc2_value; // Type-C Slave CC2电压(ADC采样�
 extern volatile uint16_t g_host_cc1_value;  // Type-C Host CC1电压值 (ADC采样值)
 extern volatile uint16_t g_host_cc2_value;  // Type-C Host CC2电压值 (ADC采样值)
 extern volatile uint8_t g_usb_status; // Type-C状态 0: 未连接, 1: Slave, 2: Host, 3: AC, 4: CC_IDLE, 5: CC_OKEY, 6: AC_IDLE, 7: AC_OKEY
+extern volatile uint8_t g_lvgl_input_disabled; // LVGL输入禁用标志 0: 正常, 1: 禁用
 extern volatile float g_battery_voltage; // 电池电压 (单位: V)
 extern volatile int16_t g_key_L_X; // 左摇杆 X 轴
 extern volatile int16_t g_key_L_Y; // 左摇杆 Y 轴
@@ -125,5 +126,14 @@ extern volatile uint8_t FileOp_Task_Status; // 文件操作任务状态
 
 //fontupd
 extern volatile uint8_t g_font_need_update; // 字库是否需要更新
+
+//usb hid
+extern volatile int16_t g_usb_joy_L_X; // USB手柄左摇杆X轴
+extern volatile int16_t g_usb_joy_L_Y; // USB手柄左摇杆Y轴
+extern volatile int16_t g_usb_joy_R_X; // USB手柄右摇杆X轴
+extern volatile int16_t g_usb_joy_R_Y; // USB手柄右摇杆Y轴
+extern volatile int16_t g_usb_mouse_dx; // USB鼠标X轴移动量
+extern volatile int16_t g_usb_mouse_dy; // USB鼠标Y轴移动量
+extern volatile uint8_t g_usb_mouse_btn; // USB鼠标按键状态
 
 #endif // __VARIABLES_H__

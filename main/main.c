@@ -28,7 +28,7 @@ void Start_Task( void * pvParameters )
 {
 	//此处只初始化上电后不再deinit的硬件
 	Wakeup_Key_Init();
-	Stick_Middle_Init();
+	Joystick_Middle_Init();
 	Pin_Ctrl_Init();
 	RNG_Init();
 	ADC1_DMA_Init();

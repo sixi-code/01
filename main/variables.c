@@ -63,6 +63,7 @@ volatile uint16_t g_slave_cc2_value = 0; // Type-C Slave CC2电压值 (ADC采样
 volatile uint16_t g_host_cc1_value = 0;  // Type-C Host CC1电压值 (ADC采样值)
 volatile uint16_t g_host_cc2_value = 0;  // Type-C Host CC2电压值 (ADC采样值)
 volatile uint8_t g_usb_status = 0; // Type-C连接状态: 0=未连接 1=CtoC空闲 2=AtoC空闲 3=AtoC设备模式 4=CtoC设备模式 5=直接主机模式 6=CtoC主机模式
+volatile uint8_t g_lvgl_input_disabled = 0; // LVGL输入禁用标志 0: 正常, 1: 禁用
 volatile float g_battery_voltage = 0.0f; // 电池电压 (单位: V)
 
 //systick_conf.c
@@ -113,3 +114,12 @@ volatile uint8_t FileOp_Task_Status = Task_P_Null; // 文件操作任务状态
 
 //fontupd
 volatile uint8_t g_font_need_update = 0; // 字库是否需要更新
+
+//usb hid
+volatile int16_t g_usb_joy_L_X = 0; // USB手柄左摇杆X轴
+volatile int16_t g_usb_joy_L_Y = 0; // USB手柄左摇杆Y轴
+volatile int16_t g_usb_joy_R_X = 0; // USB手柄右摇杆X轴
+volatile int16_t g_usb_joy_R_Y = 0; // USB手柄右摇杆Y轴
+volatile int16_t g_usb_mouse_dx = 0; // USB鼠标X轴移动量
+volatile int16_t g_usb_mouse_dy = 0; // USB鼠标Y轴移动量
+volatile uint8_t g_usb_mouse_btn = 0; // USB鼠标按键状态
