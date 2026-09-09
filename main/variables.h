@@ -136,4 +136,7 @@ extern volatile int16_t g_usb_mouse_dx; // USB鼠标X轴移动量
 extern volatile int16_t g_usb_mouse_dy; // USB鼠标Y轴移动量
 extern volatile uint8_t g_usb_mouse_btn; // USB鼠标按键状态
 
+//debug.c
+extern volatile uint8_t kv_debug_mode; // 调试输出模式 (Debug_Mode_None/TSDB/USBD/LVGL)
+
 #endif // __VARIABLES_H__
