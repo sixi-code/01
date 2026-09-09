@@ -7,7 +7,10 @@
 // 注意：仅列出已在 variables.c 中定义的变量，未引入的变量待定义后再添加
 #define PERSIST_LIST \
     KV(kv_hdp0_or_spk1,        uint8_t) \
-    KV(kv_hdp_value,           uint8_t)
+    KV(kv_hdp_value,           uint8_t) \
+    KV(kv_es9018_volume,       uint8_t) \
+    KV(kv_es9018_cfg,  ES9018_Config_t) \
+    KV(kv_debug_mode,          uint8_t)
 
 
 // 自动生成索引枚举

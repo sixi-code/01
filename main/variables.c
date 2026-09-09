@@ -123,3 +123,6 @@ volatile int16_t g_usb_joy_R_Y = 0; // USB手柄右摇杆Y轴
 volatile int16_t g_usb_mouse_dx = 0; // USB鼠标X轴移动量
 volatile int16_t g_usb_mouse_dy = 0; // USB鼠标Y轴移动量
 volatile uint8_t g_usb_mouse_btn = 0; // USB鼠标按键状态
+
+//debug.c
+volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
