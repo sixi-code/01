@@ -29,7 +29,7 @@ uint8_t GetWeekDay(uint16_t y, uint8_t m, uint8_t d)
 }
 
 //计算闰年
-uint8_t IsLeapYear(uint16_t year)
+static uint8_t IsLeapYear(uint16_t year)
 {
 	if((year%4==0 && year%100!=0) || year%400==0) return 1;
 	else return 0;
@@ -44,7 +44,7 @@ uint8_t DaysInMonth(uint16_t year, uint8_t month)
 }
 
 //计算以2000正月初一为起点计算农历月日
-uint32_t Solar_Duration(Solar_t *Solar)
+static uint32_t Solar_Duration(Solar_t *Solar)
 {
     int16_t i = 0;
 	
@@ -92,7 +92,7 @@ uint32_t Solar_Duration(Solar_t *Solar)
 }
 
 //计算某农历年是否有闰月
-uint8_t Is_Lunar_Has_LeapMonth(uint16_t SolarYear, Lunar_t *Lunar)
+static uint8_t Is_Lunar_Has_LeapMonth(uint16_t SolarYear, Lunar_t *Lunar)
 {
     if (SolarYear < 2000 || SolarYear > 2099) return 1;
 
@@ -110,7 +110,7 @@ uint8_t Is_Lunar_Has_LeapMonth(uint16_t SolarYear, Lunar_t *Lunar)
 }
 
 //计算此年农历月（非闰月）的天数
-uint8_t Lunar_Month_Days(uint16_t LunarYear, uint8_t LunarMonth)
+static uint8_t Lunar_Month_Days(uint16_t LunarYear, uint8_t LunarMonth)
 {
     if (LunarYear < 2000 || LunarYear > 2099) return 1;
     if (LunarMonth < 1 || LunarMonth > 12) return 1;
@@ -163,7 +163,7 @@ uint8_t The_24_solar_terms(uint16_t SolarYear,uint8_t *jie_qi_months,uint8_t *ji
 }
 
 // 农历转公历
-uint8_t Lunar2Solar(uint16_t year, uint8_t month, uint8_t date, uint8_t isLeap,
+static uint8_t Lunar2Solar(uint16_t year, uint8_t month, uint8_t date, uint8_t isLeap,
                    uint16_t *solar_year, uint8_t *solar_month, uint8_t *solar_date)
 {
     if (year < 2000 || year > 2099) return 1;

@@ -120,7 +120,7 @@ static inline void limit_and_deadzone(int16_t *val)
 }
 
 // 获取Type-C状态
-void Get_TypeC_Status(void)
+static void Get_TypeC_Status(void)
 {
 	static uint8_t cc_host_count = 0;
 	uint8_t last_count = cc_host_count;

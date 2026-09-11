@@ -59,8 +59,11 @@ extern RTC_DateTypeDef now_date; // 当前日期 (RTC)
 extern RTC_TimeTypeDef now_time; // 当前时间 (RTC)
 //lcd_pwm.c
 extern volatile uint8_t g_pwm_inited; // PWM是否初始化完成标志 0：未初始化，1：已初始化
+extern volatile uint8_t kv_screen_status; // 屏幕背光开关 (持久化) 0：关闭，1：开启
+extern volatile uint8_t kv_brightness;    // 屏幕亮度 0-255 (持久化)
 //max98357.c
 extern volatile uint8_t g_max98357_inited; // MAX98357A（喇叭）是否初始化标志 0：未初始化，1：已初始化
+extern volatile uint8_t kv_max98357_ststus; // MAX98357A 供电开关 (持久化) 0：关断，1：供电
 //adc.c
 extern volatile uint8_t g_adc_dma_finished; // ADC DMA传输完成标志
 extern volatile uint16_t g_slave_cc1_value; // Type-C Slave CC1电压值 (ADC采样值)
@@ -97,6 +100,7 @@ extern volatile uint8_t g_lcd_user; // 当前LCD使用者标识
 
 // es9018k2m.c
 extern volatile uint8_t g_es9018_inited;     // ES9018初始化标志
+extern volatile uint8_t kv_es9018_status;    // ES9018 供电开关 (持久化) 0：关断，1：供电
 extern volatile uint8_t music_bitdepth;      // 音频位深 16/24/32
 extern volatile uint8_t kv_hdp_value;        // 耳机音量 (0-255)
 extern volatile uint8_t kv_es9018_volume;    // ES9018 DAC 音量缓存

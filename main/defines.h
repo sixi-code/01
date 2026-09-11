@@ -16,6 +16,10 @@
 #define LCD_USER_MDIA (1 << 2)// 媒体播放器
 #define LCD_USER_GAME (1 << 3)// 游戏
 
+//定义 FatFS 逻辑驱动器编号 (fatfs_mount/fatfs_unmount 的 pdrv 参数)
+#define DEV_SD      0
+#define DEV_USB     1
+
 //基础任务
 #define BASIC_PRIO         3
 #define BASIC_STACK_SIZE   512

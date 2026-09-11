@@ -61,7 +61,7 @@ static __attribute__((aligned(4))) uint8_t W25QXX_BUFFER[W25QXX_SECTOR_BUFF_SIZE
 #define MAX_SCRATCH_INDEX       255 // 1~255 最大写入扇区
 
 // 锁定Flash，确保在多任务环境下的原子性操作
-void flash_lock(void)
+static void flash_lock(void)
 {
     if (xFlashMutex != NULL)// 确保互斥锁已创建
     {
@@ -70,7 +70,7 @@ void flash_lock(void)
 }
 
 // 解锁Flash，允许其他任务访问
-void flash_unlock(void)
+static void flash_unlock(void)
 {
     if (xFlashMutex != NULL)// 确保互斥锁已创建
     {
@@ -79,7 +79,7 @@ void flash_unlock(void)
 }
 
 //SPI3 读写一个字节
-uint8_t SPI3_ReadWriteByte(uint8_t TxData)
+static uint8_t SPI3_ReadWriteByte(uint8_t TxData)
 {
     while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET) {} //等待发送缓冲区为空(TXE=1)再写入
     SPI_I2S_SendData(SPI3, TxData);   //通过外设SPIx发送一个数据
@@ -88,7 +88,7 @@ uint8_t SPI3_ReadWriteByte(uint8_t TxData)
 }
 
 //读取芯片ID
-uint32_t W25QXX_ReadID(void)
+static uint32_t W25QXX_ReadID(void)
 {
     uint16_t Temp = 0;      
     SPI3_NSS_LOW();                 
@@ -103,11 +103,11 @@ uint32_t W25QXX_ReadID(void)
 }
 
 // 内部函数声明
-void W25QXX_Write_Enable(void);
-void W25QXX_Wait_Busy(uint8_t query_interval);
-void W25QXX_Erase_Sector_Internal(uint32_t Sector_Addr);
-void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite);
-void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead);
+static void W25QXX_Write_Enable(void);
+static void W25QXX_Wait_Busy(uint8_t query_interval);
+static void W25QXX_Erase_Sector_Internal(uint32_t Sector_Addr);
+static void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite);
+static void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead);
 
 //SPI3初始化 0-ok 1-err
 uint8_t W25QXX_Init(void)
@@ -246,7 +246,7 @@ void DMA1_Stream5_IRQHandler(void)
     }
 }
 // 等待DMA传输完成
-void SPI3_DMA_Wait_Complete(void)
+static void SPI3_DMA_Wait_Complete(void)
 {
     xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);//等待RX(Sream0)传输完成
     xSemaphoreTake(xFlashSemaphore,portMAX_DELAY);//等待TX(Sream5)传输完成
@@ -260,7 +260,7 @@ void SPI3_DMA_Wait_Complete(void)
 }
 
 // 等待W25QXX空闲 query_interval: 查询间隔(ms), 0表示不延时查询
-void W25QXX_Wait_Busy(uint8_t query_interval)
+static void W25QXX_Wait_Busy(uint8_t query_interval)
 {
     uint8_t status;
     do 
@@ -274,7 +274,7 @@ void W25QXX_Wait_Busy(uint8_t query_interval)
     } while(status & 0x01);
 }
 //W25QXX写使能 
-void W25QXX_Write_Enable(void)   
+static void W25QXX_Write_Enable(void)   
 {
     SPI3_NSS_LOW();                            //使能器件   
     SPI3_ReadWriteByte(W25X_WriteEnable);      //发送写使能  
@@ -282,7 +282,7 @@ void W25QXX_Write_Enable(void)
 }
 
 //读取SPI FLASH pBuffer:数据存储区地址  ReadAddr:开始读取地址  NumByteToRead:要读取的字节数
-void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead)   
+static void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead)   
 {
     uint16_t i, bytes_to_read;// 记录每次读取的字节数
     uint32_t current_addr = ReadAddr;// 当前读取地址
@@ -336,7 +336,7 @@ void W25QXX_Read_Internal(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteT
 }
 
 //SPI在一页(0~65535)内写入少于256个字节的数据 pBuffer:数据存储区地址  WriteAddr:开始写入地址(0~65535)  NumByteToWrite:要写入的字节数(最大不超过256)
-void W25QXX_Write_Page(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite)
+static void W25QXX_Write_Page(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite)
 {
     uint16_t i;  
     W25QXX_Write_Enable();                     //SET WEL 
@@ -380,7 +380,7 @@ void W25QXX_Write_Page(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWri
     W25QXX_Wait_Busy(1);
 }
 // 无检验写（假定目标区域已擦除），自动跨页 pBuffer:数据存储区地址  WriteAddr:开始写入地址(0~65535)  NumByteToWrite:要写入的字节数
-void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite)   
+static void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite)   
 {
     uint16_t pageremain;//单页要写入的剩余字节数      
     pageremain=256-WriteAddr%256; //单页剩余的字节数                  
@@ -402,7 +402,7 @@ void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteTo
 }
 
 // 擦除一个扇区 Sector_Addr:扇区地址 根据实际容量设置
-void W25QXX_Erase_Sector_Internal(uint32_t Sector_Addr)   
+static void W25QXX_Erase_Sector_Internal(uint32_t Sector_Addr)   
 {
     W25QXX_Write_Enable();                  			//SET WEL    
     SPI3_NSS_LOW();                         			//使能器件   
@@ -415,7 +415,7 @@ void W25QXX_Erase_Sector_Internal(uint32_t Sector_Addr)
 }
 
 // 擦除整个芯片
-void W25QXX_Erase_Chip_Internal(void)   
+static void W25QXX_Erase_Chip_Internal(void)   
 {
     W25QXX_Write_Enable();                 //SET WEL 
     SPI3_NSS_LOW();                        //使能器件   
@@ -425,7 +425,7 @@ void W25QXX_Erase_Chip_Internal(void)
 }
 
 //磨损均衡核心逻辑 保持Scratch区的循环使用，避免频繁擦写同一扇区导致Flash寿命缩短
-uint32_t W25QXX_Get_Next_Scratch_Addr(void)
+static uint32_t W25QXX_Get_Next_Scratch_Addr(void)
 {
     uint32_t search_offset = 0;// 用于扫描索引扇区的偏移量
     uint8_t current_index = 0;// 当前索引值 (0~255)
@@ -508,7 +508,7 @@ uint32_t W25QXX_Get_Next_Scratch_Addr(void)
 }
 
 // 拷贝目标扇区到 指定的 scratch 地址 用于修改数据前的备份 sector_base: 目标扇区的起始地址 scratch_addr: scratch 区的起始地址
-void copy_src_sector_to_scratch(uint32_t sector_base, uint32_t scratch_addr)
+static void copy_src_sector_to_scratch(uint32_t sector_base, uint32_t scratch_addr)
 {
     // 防止自身拷贝
     if (sector_base == scratch_addr) return;
@@ -523,7 +523,7 @@ void copy_src_sector_to_scratch(uint32_t sector_base, uint32_t scratch_addr)
 }
 
 // 从 scratch 恢复，并覆盖 patch 数据 sector_base: 目标扇区的起始地址 scratch_addr: scratch 区的起始地址 secoff: patch 数据在扇区内的偏移 secremain: patch 数据的长度 p: patch 新数据的指针
-void restore_from_scratch_with_patch(uint32_t sector_base, uint32_t scratch_addr, uint16_t secoff, uint16_t secremain, uint8_t *p)
+static void restore_from_scratch_with_patch(uint32_t sector_base, uint32_t scratch_addr, uint16_t secoff, uint16_t secremain, uint8_t *p)
 {
     for(uint32_t off=0; off<4096; off+=W25QXX_SECTOR_BUFF_SIZE){
         //off: 当前块的偏移，chunk: 当前块的大小
@@ -546,7 +546,7 @@ void restore_from_scratch_with_patch(uint32_t sector_base, uint32_t scratch_addr
 }
 
 // 写SPI FLASH pBuffer:数据存储区地址 WriteAddr:开始写入地址(0~W25QXX_FLASH_SIZE-1) NumByteToWrite:要写入的字节数
-void W25QXX_Write_Internal(uint8_t* pBuffer,uint32_t WriteAddr,uint32_t NumByteToWrite)   
+static void W25QXX_Write_Internal(uint8_t* pBuffer,uint32_t WriteAddr,uint32_t NumByteToWrite)   
 { 
     uint32_t secpos;// 扇区索引
     uint16_t secoff;// 在扇区内偏移

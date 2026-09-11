@@ -8,16 +8,16 @@
 #include "systick_conf.h"
 #include "variables.h"
 
-SD_Error CmdError(void);  
-SD_Error CmdResp7Error(void);
-SD_Error CmdResp1Error(uint8_t cmd);
-SD_Error CmdResp3Error(void);
-SD_Error CmdResp2Error(void);
-SD_Error CmdResp6Error(uint8_t cmd,uint16_t*prca);  
-SD_Error SDEnWideBus(uint8_t enx);	  
-SD_Error IsCardProgramming(uint8_t *pstatus); 
-SD_Error FindSCR(uint16_t rca,uint32_t *pscr);
-uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes); 
+static SD_Error CmdError(void);  
+static SD_Error CmdResp7Error(void);
+static SD_Error CmdResp1Error(uint8_t cmd);
+static SD_Error CmdResp3Error(void);
+static SD_Error CmdResp2Error(void);
+static SD_Error CmdResp6Error(uint8_t cmd,uint16_t*prca);  
+static SD_Error SDEnWideBus(uint8_t enx);	  
+static SD_Error IsCardProgramming(uint8_t *pstatus); 
+static SD_Error FindSCR(uint16_t rca,uint32_t *pscr);
+static uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes); 
 
 static uint8_t CardType=SDIO_STD_CAPACITY_SD_CARD_V1_1;//SD卡类型（默认为1.x卡）
 static uint32_t CSD_Tab[4],CID_Tab[4],RCA=0;		   //SD卡CSD,CID以及相对地址(RCA)数据
@@ -39,19 +39,19 @@ static SDIO_DataInitTypeDef SDIO_DataInitStructure;
 __align(4) uint8_t SDIO_DATA_BUFFER[512];
 
 //获取sdcard互斥锁
-void sdcard_lock(void) 
+static void sdcard_lock(void) 
 {
 	while (xSemaphoreTake(xSDcardMutex, portMAX_DELAY) != pdTRUE);
 }
 
 //释放sdcard互斥锁
-void sdcard_unlock(void) 
+static void sdcard_unlock(void) 
 {
 	xSemaphoreGive(xSDcardMutex);
 }
  
 //SDIO寄存器复位
-void SDIO_Register_Deinit()
+static void SDIO_Register_Deinit()
 {
 	SDIO->POWER=0x00000000;
 	SDIO->CLKCR=0x00000000;
@@ -570,7 +570,7 @@ SD_Error SD_SelectDeselect(uint32_t addr)
 }
 
 //等待SDIO+DMA传输完成
-SD_Error SDIO_DMA_Wait_Complete(void)
+static SD_Error SDIO_DMA_Wait_Complete(void)
 {
     BaseType_t result;
 
@@ -992,7 +992,7 @@ SD_Error SD_ProcessIRQSrc(void)
 
 //检查CMD0的执行状态
 //返回值:sd卡错误码
-SD_Error CmdError(void)
+static SD_Error CmdError(void)
 {
 	SD_Error errorstatus = SD_OK;
 	uint32_t timeout = SDIO_CMD0TIMEOUT;	   
@@ -1007,7 +1007,7 @@ SD_Error CmdError(void)
 
 //检查R7响应的错误状态
 //返回值:sd卡错误码
-SD_Error CmdResp7Error(void)
+static SD_Error CmdResp7Error(void)
 {
 	SD_Error errorstatus=SD_OK;
 	uint32_t status;
@@ -1034,7 +1034,7 @@ SD_Error CmdResp7Error(void)
 //检查R1响应的错误状态
 //cmd:当前命令
 //返回值:sd卡错误码
-SD_Error CmdResp1Error(uint8_t cmd)
+static SD_Error CmdResp1Error(uint8_t cmd)
 {	  
    	uint32_t status; 
 	while(1)
@@ -1059,7 +1059,7 @@ SD_Error CmdResp1Error(uint8_t cmd)
 
 //检查R3响应的错误状态
 //返回值:错误状态
-SD_Error CmdResp3Error(void)
+static SD_Error CmdResp3Error(void)
 {
 	uint32_t status;						 
  	while(1)
@@ -1078,7 +1078,7 @@ SD_Error CmdResp3Error(void)
 
 //检查R2响应的错误状态
 //返回值:错误状态
-SD_Error CmdResp2Error(void)
+static SD_Error CmdResp2Error(void)
 {
 	SD_Error errorstatus=SD_OK;
 	uint32_t status;
@@ -1107,7 +1107,7 @@ SD_Error CmdResp2Error(void)
 //cmd:之前发送的命令
 //prca:卡返回的RCA地址
 //返回值:错误状态
-SD_Error CmdResp6Error(uint8_t cmd,uint16_t*prca)
+static SD_Error CmdResp6Error(uint8_t cmd,uint16_t*prca)
 {
 	SD_Error errorstatus=SD_OK;
 	uint32_t status;					    
@@ -1147,7 +1147,7 @@ SD_Error CmdResp6Error(uint8_t cmd,uint16_t*prca)
 //SDIO使能宽总线模式
 //enx:0,不使能;1,使能;
 //返回值:错误状态
-SD_Error SDEnWideBus(uint8_t enx)
+static SD_Error SDEnWideBus(uint8_t enx)
 {
 	SD_Error errorstatus = SD_OK;
  	uint32_t scr[2]={0,0};//SCR寄存器数据
@@ -1186,7 +1186,7 @@ SD_Error SDEnWideBus(uint8_t enx)
 //检查卡是否正在执行写操作
 //pstatus:当前状态.
 //返回值:错误代码
-SD_Error IsCardProgramming(uint8_t *pstatus)
+static SD_Error IsCardProgramming(uint8_t *pstatus)
 {
  	uint32_t respR1 = 0, status = 0;//response1寄存器,状态寄存器 
 
@@ -1255,7 +1255,7 @@ SDCardState SD_GetState(void)
 //rca:卡相对地址
 //pscr:数据缓存区(存储SCR内容)
 //返回值:错误状态		   
-SD_Error FindSCR(uint16_t rca,uint32_t *pscr)
+static SD_Error FindSCR(uint16_t rca,uint32_t *pscr)
 { 
 	uint32_t index = 0; 
 	SD_Error errorstatus = SD_OK;
@@ -1335,7 +1335,7 @@ SD_Error FindSCR(uint16_t rca,uint32_t *pscr)
 //得到NumberOfBytes以2为底的指数.
 //NumberOfBytes:字节数.
 //返回值:以2为底的指数值
-uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes)
+static uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes)
 {
 	uint8_t count=0;
 	while(NumberOfBytes!=1)

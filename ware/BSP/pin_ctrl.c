@@ -5,7 +5,7 @@
 
 
 // 充电检测引脚初始化
-void Battery_Ischarging_Pin_Init(void){
+static void Battery_Ischarging_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -38,7 +38,7 @@ void Is_Battery_Charging(void){
 }
 
 // 电源维持引脚初始化
-void Power_Maintain_Pin_Init(void){
+static void Power_Maintain_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -62,7 +62,7 @@ void Power_Maintain_Ctrl(uint8_t status){
 }
 
 // 音响供电引脚初始化
-void Speaker_Power_Pin_Init(void){
+static void Speaker_Power_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
@@ -86,7 +86,7 @@ void Speaker_Power_Ctrl(uint8_t status){
 }
 
 // 耳机供电引脚初始化
-void Headphone_Power_Pin_Init(void){
+static void Headphone_Power_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -110,7 +110,7 @@ void Headphone_Power_Ctrl(uint8_t status){
 }
 
 // 耳机连接检测引脚初始化
-void Headphone_Isconnecting_Pin_Init(void){
+static void Headphone_Isconnecting_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
@@ -131,7 +131,7 @@ void Is_Headphone_Connecting(void){
 }
 
 // TF卡连接检测引脚初始化
-void TFcard_Isconnecting_Pin_Init(void){
+static void TFcard_Isconnecting_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -151,7 +151,7 @@ void Is_TFcard_Connecting(void){
 }
 
 // I2S音频切换引脚初始化
-void I2S_Exchange_Pin_Init(void){
+static void I2S_Exchange_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -180,7 +180,7 @@ void I2S_Exchange_Ctrl(uint8_t status){
 }
 
 // USB向外供电引脚初始化
-void USB_Power_Out_Pin_Init(void){
+static void USB_Power_Out_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -204,7 +204,7 @@ void USB_Power_Out_Ctrl(uint8_t status){
 }
 
 // USB主从切换引脚初始化
-void USB_Slave_Host_Pin_Init(void){
+static void USB_Slave_Host_Pin_Init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);

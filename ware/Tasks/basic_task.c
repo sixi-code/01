@@ -1,22 +1,17 @@
-#include "stm32f4xx.h" 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "pin_ctrl.h"
 #include "key.h"
 #include "adc.h"
-#include "music.h"
 #include "es9018k2m.h"
 #include "max98357A.h"
 #include "rtc_clock.h"
 #include "v2p_bat.h"
 #include "main.h"
-#include "debug.h"
 #include "lcd_pwm.h"
 #include "sdio_sdcard.h"
 #include "tsdb_log.h"
 #include "kvdb_ctrl.h"
-#include "fontupd.h"
-#include "page_manager.h"
 
 //此task完成以下轮询读取和处理
 
@@ -78,8 +73,8 @@ void Basic_Task( void * pvParameters )
 		//pwm ctrl
 		if(!g_pwm_inited && kv_screen_status)// 如果PWM未初始化且屏幕状态为开启，则初始化PWM
 		{
-			LCD_TIM4_PWM_Init();// 初始化PWM
-			LCD_PWM_SetFreq(10000);// 设置PWM频率为10kHz
+			LCD_TIM8_PWM_Init();// 初始化PWM
+			LCD_PWM_SetFrequency(10000);// 设置PWM频率为10kHz
 		}
 		if(g_pwm_inited && !kv_screen_status)// 如果PWM已初始化且屏幕状态为关闭，则卸载PWM
 		{
