@@ -130,3 +130,6 @@ volatile uint8_t g_usb_mouse_btn = 0; // USB鼠标按键状态
 
 //debug.c
 volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
+
+//file_unit
+char *current_path = NULL; // 文件浏览器当前路径

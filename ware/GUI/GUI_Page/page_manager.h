@@ -1,0 +1,59 @@
+#ifndef __PAGE_MANAGER_H
+#define __PAGE_MANAGER_H
+
+#include "lvgl.h"
+#include <stdbool.h>
+#include <stddef.h> // 需要用到 NULL
+
+// 页面状态枚举
+typedef enum {
+    PAGE_STATE_UNINIT = 0,  // 未初始化
+    PAGE_STATE_INIT,        // 已初始化
+    PAGE_STATE_ACTIVE,      // 活跃中
+} Page_State_t;
+
+// 页面接口结构体
+typedef struct {
+    uint32_t id;            // 页面ID
+    void (*init)(void);     // 创建页面UI
+    void (*update)(void);   // 刷新页面数据
+    void (*exit)(void);     // 销毁页面对象
+} Page_Interface_t;
+
+// 页面ID定义 (保持连续，作为数组下标)
+#define PAGE_NONE   	 0
+#define PAGE_START   	 1
+#define PAGE_DESKTOP     2
+#define PAGE_FILE        3
+#define PAGE_FONT_UPDATE 4
+#define PAGE_GAME        5
+#define PAGE_MEDIA       6
+#define PAGE_DISPLAY     7
+#define PAGE_MAX_ID      8
+
+// 历史记录栈深度
+#define PAGE_HISTORY_MAX_DEPTH 6
+
+
+// 页面管理控制函数
+void Page_Manager_Init(void);
+void Page_Manager_Loop(void);
+uint32_t Page_Get_Current(void);
+uint32_t Page_Get_Next(void);
+void Page_Manager_Deinit(void);
+
+// 内部实现函数（不要直接调用，使用可变参数吸收多余的NULL）
+void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...);
+
+// 核心宏：通过在参数末尾追加 NULL，巧妙解决 1个 或 2个 参数的重载问题
+// 用于请求切换页面，path 参数仅在 PAGE_FILE 页面时有效
+#define Page_Request_Switch(...) _Page_Request_Switch_Impl(__VA_ARGS__, NULL)
+
+// 后退与历史管理函数
+void Page_Back(void);
+void Page_Clear_History(void);
+
+// 手动推入历史栈（用于 LVGL 被挂起前保存当前页面）
+void Page_Push_History(uint32_t page_id);
+
+#endif
