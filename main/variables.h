@@ -49,6 +49,7 @@ extern volatile uint8_t g_charge_status; // 0: 未充电, 1: 充电中, 2: 充�
 extern volatile uint8_t g_vbus_status;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
 extern volatile uint8_t g_headphone_status; // 0: 耳机未插入, 1: 耳机已插入
 extern volatile uint8_t g_TFcard_status; // 0: TF卡未插入, 1: TF卡已插入
+extern volatile uint8_t g_maintain_status; // 0: 不保持供电, 1: 保持供电(不断电)
 extern volatile uint8_t kv_hdp0_or_spk1; // 0: 耳机, 1: 扬声器
 // key.c
 extern volatile uint8_t g_key_WKP_RT; // 0: 唤醒按键未按下, 1: 唤醒按键已按下
@@ -145,5 +146,8 @@ extern volatile uint8_t kv_debug_mode; // 调试输出模式 (Debug_Mode_None/TS
 
 //file_unit
 extern char *current_path; // 文件浏览器当前路径
+
+//status_bar.c
+extern volatile uint8_t g_VorP; // 状态栏电池区显示模式 0-显示电压 1-显示百分比
 
 #endif // __VARIABLES_H__
