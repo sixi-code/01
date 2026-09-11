@@ -38,6 +38,7 @@ volatile uint8_t g_charge_status = 0; // 0: 未充电, 1: 充电中, 2: 充电�
 volatile uint8_t g_vbus_status = 0;    // 0: usb充电未连接, 1: 已连接 (usb不向外供电时有效 0-低电平 1-高电平)
 volatile uint8_t g_headphone_status = 0; // 0: 耳机未插入, 1: 耳机已插入
 volatile uint8_t g_TFcard_status = 0; // 0: TF卡未插入, 1: TF卡已插入
+volatile uint8_t g_maintain_status = 0; // 0: 不保持供电, 1: 保持供电(不断电)
 volatile uint8_t kv_hdp0_or_spk1 = 0; // 0: 耳机, 1: 扬声器
 //key.c
 volatile uint8_t g_key_L_M_RT = 0; // 0: 左摇杆未在中间位置, 1: 左摇杆在中间位置
@@ -133,3 +134,6 @@ volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
 
 //file_unit
 char *current_path = NULL; // 文件浏览器当前路径
+
+//status_bar.c
+volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-显示百分比

@@ -52,13 +52,13 @@ static void Power_Maintain_Pin_Init(void){
 
 }
 
-// 控制电源维持状态
+//   控制电源维持状态
 //   status: 0 → 输出低电平, 允许断电
 //   status: 1 → 输出高电平, 保持供电
 void Power_Maintain_Ctrl(uint8_t status){
     if(status == 0) GPIO_ResetBits(GPIOA, GPIO_Pin_11);
     else GPIO_SetBits(GPIOA, GPIO_Pin_11);
-
+    g_maintain_status = status;
 }
 
 // 音响供电引脚初始化
