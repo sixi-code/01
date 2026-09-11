@@ -41,6 +41,8 @@ void lv_port_indev_init(void)
 }
 
 // 读取鼠标输入数据的回调函数
+// indev_drv: 输入设备驱动的指针
+// data: 用于存储输入设备数据的结构体指针
 static void mouse_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {
     if (g_lvgl_input_disabled)// 如果LVGL输入被禁用，则不更新鼠标位置和状态 

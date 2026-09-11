@@ -64,6 +64,8 @@ void SDIO_Register_Deinit()
 	SDIO->MASK=0x00000000;	 
 }
 
+//SDIO时钟初始化设置
+//返回值:错误代码;(0,无错误)
 SD_Error SD_Init(void)
 {   if (xSDcardMutex==NULL) xSDcardMutex = xSemaphoreCreateMutex();
     if (xSDcardSemaphore==NULL)xSDcardSemaphore = xSemaphoreCreateCounting(2,0);
