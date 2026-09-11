@@ -1,3 +1,6 @@
+//采用软件IIC方式控制ES9018芯片，使用GPIOB的6、7引脚作为SCL、SDA
+//配置值时，先将配置值写入s_es9018_config_new结构体中，
+//然后调用ES9018_Update_Register()函数将新的配置写入芯片寄存器
 #include "stm32f4xx.h"                  
 #include "es9018k2m.h"                  
 #include "FreeRTOS.h"
@@ -7,6 +10,7 @@
 #include "defines.h"
 #include "systick_conf.h"
 #include "pin_ctrl.h"
+
 
 #define ESS9018_ADDR    0x90    // 设备地址 (写)
 #define ESS9018_ADDR_R  0x91    // 设备地址 (读)
