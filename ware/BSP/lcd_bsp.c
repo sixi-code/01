@@ -27,7 +27,7 @@
 
 static uint8_t lcd_dma_user = 0; // DMA 传输发起者标识（用于区分不同任务的 LCD 操作）
 // LCD GPIO SPI DMA 初始化函数
-void LCD_GPIO_Init(void)
+static void LCD_GPIO_Init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
     SPI_InitTypeDef SPI_InitStructure;

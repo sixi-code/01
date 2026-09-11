@@ -3,7 +3,9 @@
 #include "stm32f4xx.h"                  // Device header
 
 void Pin_Ctrl_Init(void);
-void Is_Battery_Charging(void);
+void Is_Battery_Charging(void);      // 充电检测
+void Is_Headphone_Connecting(void);  // 耳机插入检测
+void Is_TFcard_Connecting(void);     // TF卡插入检测
 void Power_Maintain_Ctrl(uint8_t status);
 void Headphone_Power_Ctrl(uint8_t status);
 void Speaker_Power_Ctrl(uint8_t status);
