@@ -137,3 +137,6 @@ char *current_path = NULL; // 文件浏览器当前路径
 
 //status_bar.c
 volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-显示百分比
+
+//music.c
+volatile uint8_t Music_Suspend_Flag = 0; // 音乐暂停标志 0: 播放中, 1: 暂停
