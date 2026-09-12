@@ -18,14 +18,14 @@ typedef struct {
 
 /* 任务注册表 (数组索引必须与 Task_N_xxx 宏严格对应) */
 static const Task_Registry_t Task_List[] = {
-    [Task_N_Basic] = { Basic_Task, "Basic_Task", BASIC_STACK_SIZE, BASIC_PRIO, &Basic_Task_handler, &Basic_Task_Status },
-    [Task_N_LVGL]  = { Lvgl_Task,  "LVGL_Task",  LVGL_STACK_SIZE,  LVGL_PRIO,  &Lvgl_Task_handler,  &LVGL_Task_Status  },
-    [Task_N_USB]   = { USB_Task,   "USB_Task",   USB_STACK_SIZE,   USB_PRIO,   &USB_Task_handler,   &USB_Task_Status   },
-    [Task_N_Music] = { Music_Task, "Music_Task", MUSIC_STACK_SIZE, MUSIC_PRIO, &Music_Task_handler, &Music_Task_Status },
-    [Task_N_Media]  = { Media_Task,  "Media_Task",  MEDIA_STACK_SIZE,  MEDIA_PRIO,  &Media_Task_handler,  &Media_Task_Status  },
-    [Task_N_Game]  = { Game_Task,  "Game_Task",  GAME_STACK_SIZE,  GAME_PRIO,  &Game_Task_handler,  &Game_Task_Status  },
-    [Task_N_Font]   = { Font_Task,   "Font_Task",   FONT_STACK_SIZE,   FONT_PRIO,   &Font_Task_handler,   &Font_Task_Status   },
-    [Task_N_FileOp] = { FileOp_Task, "FileOp_Task", FILEOP_STACK_SIZE, FILEOP_PRIO, &FileOp_Task_handler, &FileOp_Task_Status },
+    [Task_N_Basic]  = { Basic_Task, "Basic_Task", BASIC_STACK_SIZE, BASIC_PRIO, &Basic_Task_handler, &Basic_Task_Status },
+    [Task_N_LVGL]   = { Lvgl_Task,  "LVGL_Task",  LVGL_STACK_SIZE,  LVGL_PRIO,  &Lvgl_Task_handler,  &LVGL_Task_Status  },
+    [Task_N_USB]    = { NULL,   "USB_Task",   USB_STACK_SIZE,   USB_PRIO,   &USB_Task_handler,   &USB_Task_Status   },
+    [Task_N_Music]  = { NULL, "Music_Task", MUSIC_STACK_SIZE, MUSIC_PRIO, &Music_Task_handler, &Music_Task_Status },
+    [Task_N_Media]  = { NULL,  "Media_Task",  MEDIA_STACK_SIZE,  MEDIA_PRIO,  &Media_Task_handler,  &Media_Task_Status  },
+    [Task_N_Game]   = { NULL,  "Game_Task",  GAME_STACK_SIZE,  GAME_PRIO,  &Game_Task_handler,  &Game_Task_Status  },
+    [Task_N_Font]   = { NULL,   "Font_Task",   FONT_STACK_SIZE,   FONT_PRIO,   &Font_Task_handler,   &Font_Task_Status   },
+    [Task_N_FileOp] = { NULL, "FileOp_Task", FILEOP_STACK_SIZE, FILEOP_PRIO, &FileOp_Task_handler, &FileOp_Task_Status },
 };
 
 #define TASK_NUM_MAX (sizeof(Task_List) / sizeof(Task_List[0]))//任务数量最大值
