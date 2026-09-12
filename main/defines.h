@@ -20,6 +20,34 @@
 #define DEV_SD      0
 #define DEV_USB     1
 
+//...定义 USB 功能 (g_usb_function 取值) ...//
+#define USB_NONE        0
+#define USBD_LOG        1
+#define USBD_CMD        2
+#define USBD_MSC        3
+#define USBD_UAC1       4
+#define USBD_UAC2       5
+#define USBD_DISP       6
+#define USBD_GMPD       7
+#define USBD_KBD        8
+#define USBD_MOU        9
+#define USBH_CDC        10
+#define USBH_MSC        11
+#define USBH_GMPD       12
+#define USBH_HID        13
+
+//...定义 Music_Status 状态 (Music 播放状态机) ...//
+#define Music_None     0
+#define Music_Init     1  //外部置位,用于打开MUSIC播放
+#define Song_Prepare   2
+#define Song_Playing   3
+#define Song_End       4
+#define Song_Next      5  //外部置位,无视Music_Switch_Method切歌
+#define Song_Previous  6  //外部置位,无视Music_Switch_Method切歌
+#define Song_File      7  //外部置位,通过选择文件列表切歌
+#define Song_Error     8  //外部置位,用于退出MUSIC播放
+#define Music_Exit     9  //外部置位,用于退出MUSIC播放
+
 //基础任务
 #define BASIC_PRIO         3
 #define BASIC_STACK_SIZE   512

@@ -92,6 +92,7 @@ volatile uint8_t g_es9018_inited = 0;     // ES9018初始化标志
 volatile uint8_t kv_es9018_status = 0;    // ES9018 供电开关 (持久化) 0：关断，1：供电
 volatile uint8_t music_bitdepth = 24;      // 音频位深 16/24/32
 volatile uint8_t kv_hdp_value = 128;       // 耳机音量 (0-255)
+volatile uint8_t kv_spk_value = 32;       // 扬声器音量 (持久化) 0-255
 volatile uint8_t kv_es9018_volume = 128;   // ES9018 DAC 音量缓存
 volatile ES9018_Config_t kv_es9018_cfg = {0,0,104,2,0,0,0,0,0,5,0,1,5,1,0,0,0,0}; // ES9018 DAC 配置
 // fontupd.c
@@ -140,3 +141,16 @@ volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-
 
 //music.c
 volatile uint8_t Music_Suspend_Flag = 0; // 音乐暂停标志 0: 播放中, 1: 暂停
+volatile uint8_t Music_Status = Music_None; // 音乐播放状态
+
+
+//keyboard.c
+volatile uint8_t g_host_kbd_key = 0;      // 接收到的物理键盘键码 (USB Host HID)
+volatile uint8_t g_host_kbd_mod = 0;      // 接收到的物理键盘修饰键 (Shift等)
+volatile uint8_t g_host_kbd_trigger = 0;  // 物理键盘按键触发标志 0:无 1:有
+volatile uint8_t g_usb_kbd_modifier = 0; // 向外发送的修饰键 (Shift, Ctrl, Alt 等)
+volatile uint8_t g_usb_kbd_key = 0;      // 向外发送的键码 (Keycode)
+volatile uint8_t g_usb_kbd_trigger = 0;  // 向外发送状态机: 0=空闲 1=请求按下 2=请求松开
+
+//usb
+volatile uint8_t g_usb_function = 0; // USB功能 (USB_NONE/USBD_*/USBH_*)

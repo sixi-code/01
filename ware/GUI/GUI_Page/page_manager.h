@@ -29,7 +29,8 @@ typedef struct {
 #define PAGE_GAME        5
 #define PAGE_MEDIA       6
 #define PAGE_DISPLAY     7
-#define PAGE_MAX_ID      8
+#define PAGE_MUSIC       8
+#define PAGE_MAX_ID      9
 
 // 历史记录栈深度
 #define PAGE_HISTORY_MAX_DEPTH 6
