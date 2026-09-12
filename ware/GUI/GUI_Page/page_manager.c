@@ -22,7 +22,8 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_FONT_UPDATE]= NULL,
     [PAGE_GAME]       = &page_game_interface,
     [PAGE_MEDIA]      = &page_media_interface,
-    [PAGE_DISPLAY]    = &page_display_interface
+    [PAGE_DISPLAY]    = &page_display_interface,
+    [PAGE_MUSIC]      = NULL
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中

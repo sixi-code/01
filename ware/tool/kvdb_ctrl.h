@@ -14,7 +14,8 @@
     KV(kv_brightness,          uint8_t) \
     KV(kv_screen_status,       uint8_t) \
     KV(kv_es9018_status,       uint8_t) \
-    KV(kv_max98357_ststus,     uint8_t)
+    KV(kv_max98357_ststus,     uint8_t) \
+    KV(kv_spk_value,           uint8_t)
 
 
 // 自动生成索引枚举
