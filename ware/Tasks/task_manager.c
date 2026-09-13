@@ -24,7 +24,7 @@ static const Task_Registry_t Task_List[] = {
     [Task_N_Music]  = { NULL, "Music_Task", MUSIC_STACK_SIZE, MUSIC_PRIO, &Music_Task_handler, &Music_Task_Status },
     [Task_N_Media]  = { NULL,  "Media_Task",  MEDIA_STACK_SIZE,  MEDIA_PRIO,  &Media_Task_handler,  &Media_Task_Status  },
     [Task_N_Game]   = { NULL,  "Game_Task",  GAME_STACK_SIZE,  GAME_PRIO,  &Game_Task_handler,  &Game_Task_Status  },
-    [Task_N_Font]   = { NULL,   "Font_Task",   FONT_STACK_SIZE,   FONT_PRIO,   &Font_Task_handler,   &Font_Task_Status   },
+    [Task_N_Font]   = { Font_Task,   "Font_Task",   FONT_STACK_SIZE,   FONT_PRIO,   &Font_Task_handler,   &Font_Task_Status   },
     [Task_N_FileOp] = { NULL, "FileOp_Task", FILEOP_STACK_SIZE, FILEOP_PRIO, &FileOp_Task_handler, &FileOp_Task_Status },
 };
 
@@ -70,6 +70,12 @@ void Task_Manager( void * pvParameters )
             switch (current_action)
             {
                 case Task_T_Creat:
+                    /* 注册表里尚未实现的项 task_func 为 NULL, 直接降级为 Task_P_Null,
+                       否则 xTaskCreate(NULL, ...) 会创建入口为空指针的任务 */
+                    if (Task_List[i].task_func == NULL) {
+                        *(Task_List[i].status_ptr) = Task_P_Null;
+                        break;
+                    }
                     if (*pHandle == NULL) {
                         xTaskCreate(Task_List[i].task_func,
                                     Task_List[i].task_name,
