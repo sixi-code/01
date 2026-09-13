@@ -21,16 +21,37 @@ typedef struct {
 } Page_Interface_t;
 
 // 页面ID定义 (保持连续，作为数组下标)
+// 页面ID定义 (保持连续，作为数组下标)
 #define PAGE_NONE   	 0
 #define PAGE_START   	 1
 #define PAGE_DESKTOP     2
-#define PAGE_FILE        3
-#define PAGE_FONT_UPDATE 4
-#define PAGE_GAME        5
-#define PAGE_MEDIA       6
-#define PAGE_DISPLAY     7
-#define PAGE_MUSIC       8
-#define PAGE_MAX_ID      9
+#define PAGE_MEM     	 3
+#define PAGE_KEY_TEST 	 4
+#define PAGE_MUSIC    	 5
+#define PAGE_DEBUG    	 6
+#define PAGE_LOG_CTRL    7
+#define PAGE_USB_CTRL    8
+#define PAGE_NOTE        9
+#define PAGE_FILE        10
+#define PAGE_GAME        11
+#define PAGE_MEDIA       12
+#define PAGE_DISPLAY     13
+#define PAGE_SETTINGS    14
+#define PAGE_TEXT        15
+#define PAGE_CANVAS      16
+#define PAGE_ABOUT       17
+#define PAGE_ES9018      18
+#define PAGE_TIME_SET    19
+#define PAGE_CLOCK       20
+#define PAGE_CALENDAR    21
+#define PAGE_WORDS       22
+#define PAGE_CALCULATOR  23
+#define PAGE_CMD         24
+#define PAGE_LOTS        25
+#define PAGE_ALBUM       26
+#define PAGE_FONT_UPDATE 27
+#define PAGE_SERIAL      28
+#define PAGE_MAX_ID      29
 
 // 历史记录栈深度
 #define PAGE_HISTORY_MAX_DEPTH 6
