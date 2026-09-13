@@ -18,11 +18,9 @@
 #define WORKBUF_SIZE 4096
 
 static FIL fil;                     // 文件对象
-static uint8_t *workbuf = NULL;     // TJpgDec 工作内存池
-static uint16_t *line_buf = NULL;   // 行缓冲区 (RGB565)
+static uint16_t *line_buf = NULL;   // 行缓冲区 (RGB565)，由解码回调共享，必须文件作用域
 static uint16_t buf_start_y = 0;    // 缓冲区当前起始行
 static uint16_t buf_filled_lines = 0; // 缓冲区有效行数
-static int file_opened = 0;          // 文件是否已打开
 static int16_t g_offset_x = 0;       // 居中X偏移
 static int16_t g_offset_y = 0;       // 居中Y偏移
 
@@ -116,7 +114,7 @@ uint8_t Decode_JPG_Picture(const char *path)
     uint8_t ret = 0;// 返回值，0表示成功，1表示失败
     uint8_t file_opened = 0;// 文件是否已打开标志
     uint8_t *workbuf = NULL;// 工作缓冲区
-    uint16_t *line_buf = NULL;// 行缓冲区
+    line_buf = NULL;// 行缓冲区（文件作用域，与解码回调共享）
 
     do {
         fr = f_open(&fil, path, FA_READ);
