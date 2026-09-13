@@ -2,6 +2,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "page_manager.h"
+#include "start_page.h"
+#include "desktop_page.h"
 #include "variables.h"
 #include <string.h>
 #include <stdarg.h>
@@ -16,8 +18,8 @@ static const Page_Interface_t page_display_interface = { .id = PAGE_DISPLAY };
 // 1. 静态映射表：直接将页面接口指针按 ID 顺序放入数组
 static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_NONE]       = NULL,
-    [PAGE_START]      = NULL,
-    [PAGE_DESKTOP]    = NULL,
+    [PAGE_START]      = &page_start_interface,
+    [PAGE_DESKTOP]    = &page_desktop_interface,
     [PAGE_FILE]       = NULL,
     [PAGE_FONT_UPDATE]= NULL,
     [PAGE_GAME]       = &page_game_interface,

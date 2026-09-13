@@ -17,8 +17,7 @@ void Debug_Dump_TSDB_To_USB(int count)
 void Debug_Dump_TSDB_To_LVGL(int count)
 {
     if (kv_debug_mode != Debug_Mode_None) return;
-    // TODO: lvgl_printf 未实现, LVGL 端实现后恢复
-    // lvgl_printf("--- TSDB Dump Start (%d) ---\n", count);
+    lvgl_printf("--- TSDB Dump Start (%d) ---\n", count);
     tsdb_show_recent_on_lvgl(count);
-    // lvgl_printf("--- TSDB Dump End ---\n");
+    lvgl_printf("--- TSDB Dump End ---\n");
 }

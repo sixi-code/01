@@ -148,7 +148,7 @@ static bool tsdb_read_cb(fdb_tsl_t tsl, void *arg)
     return false; // 继续遍历下一条
 }
 
-// 统一的处理函数：获取并正序打印
+// 统一的处理函数：获取并正序打印到指定目标（LVGL 或 USB）
 // num: 请求获取的最大条数
 // target: 输出目标，TSDB_OUT_LVGL 或 TSDB_OUT_USB
 static void tsdb_show_recent_forward(int num, tsdb_out_target_t target)
@@ -173,11 +173,10 @@ static void tsdb_show_recent_forward(int num, tsdb_out_target_t target)
         timestamp_to_hms(records[i].timestamp, time_str, sizeof(time_str));
 
         if (target == TSDB_OUT_LVGL) {
-            // TODO: lvgl_printf 未实现, LVGL 端实现后恢复
-            // lvgl_printf("[%s] %s\n", time_str, records[i].text);
+            lvgl_printf("[%s] %s\n", time_str, records[i].text);
             vTaskDelay(pdMS_TO_TICKS(5));
         } else if (target == TSDB_OUT_USB) {
-            // TODO: usb_printf 未实现, USB CDC 建好后恢复
+            
             // usb_printf("[%s] %s\r\n", time_str, records[i].text);
             vTaskDelay(pdMS_TO_TICKS(5));
         }
@@ -187,11 +186,12 @@ static void tsdb_show_recent_forward(int num, tsdb_out_target_t target)
     free_ccm(records);
 }
 
+// 将 TSDB 中的日志信息输出到 LVGL
 void tsdb_show_recent_on_lvgl(int num)
 {
     tsdb_show_recent_forward(num, TSDB_OUT_LVGL);
 }
-
+// 将 TSDB 中的日志信息输出到 USB
 void tsdb_show_recent_on_usb(int num)
 {
     tsdb_show_recent_forward(num, TSDB_OUT_USB);
