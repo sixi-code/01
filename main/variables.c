@@ -135,12 +135,14 @@ volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
 
 //file_unit
 char *current_path = NULL; // 文件浏览器当前路径
+char *chosen_file_path = NULL; // 文件浏览器选中文件的完整路径
 
 //status_bar.c
 volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-显示百分比
 
 //music.c
 volatile uint8_t Music_Suspend_Flag = 0; // 音乐暂停标志 0: 播放中, 1: 暂停
+volatile uint8_t kv_music_switch_method = 0; // 音乐播放模式 (持久化)
 volatile uint8_t Music_Status = Music_None; // 音乐播放状态
 
 

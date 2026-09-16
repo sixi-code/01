@@ -147,12 +147,14 @@ extern volatile uint8_t kv_debug_mode; // 调试输出模式 (Debug_Mode_None/TS
 
 //file_unit
 extern char *current_path; // 文件浏览器当前路径
+extern char *chosen_file_path; // 文件浏览器选中文件的完整路径
 
 //status_bar.c
 extern volatile uint8_t g_VorP; // 状态栏电池区显示模式 0-显示电压 1-显示百分比
 
 //music.c
 extern volatile uint8_t Music_Suspend_Flag; // 音乐暂停标志 0: 播放中, 1: 暂停
+extern volatile uint8_t kv_music_switch_method; // 音乐播放模式 (Play_In_Order/Play_Randomly/Play_Repeatly)
 extern volatile uint8_t Music_Status;         // 音乐播放状态 (Music_None/Song_*/Music_Exit)
 
 //keyboard.c

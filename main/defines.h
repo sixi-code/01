@@ -39,14 +39,19 @@
 //...定义 Music_Status 状态 (Music 播放状态机) ...//
 #define Music_None     0
 #define Music_Init     1  //外部置位,用于打开MUSIC播放
-#define Song_Prepare   2
-#define Song_Playing   3
-#define Song_End       4
+#define Song_Prepare   2  //外部置位,用于切歌后准备播放
+#define Song_Playing   3  //外部置位,用于播放中
+#define Song_End       4  //外部置位,用于播放结束
 #define Song_Next      5  //外部置位,无视Music_Switch_Method切歌
 #define Song_Previous  6  //外部置位,无视Music_Switch_Method切歌
 #define Song_File      7  //外部置位,通过选择文件列表切歌
 #define Song_Error     8  //外部置位,用于退出MUSIC播放
 #define Music_Exit     9  //外部置位,用于退出MUSIC播放
+
+//...定义 Music 播放模式 (kv_music_switch_method) ...//
+#define Play_In_Order  0  //顺序播放
+#define Play_Randomly  1  //随机播放
+#define Play_Repeatly  2  //单曲循环
 
 //基础任务
 #define BASIC_PRIO         3
