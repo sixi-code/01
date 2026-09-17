@@ -451,9 +451,9 @@ void wav_play_song_task(uint8_t* fname)
 		if(Music_Status == Song_Error) Music_Status = Music_Exit;
 		if(Music_Status == Song_End) 
 		{ 
-			if(kv_music_switch_method == Play_In_Order); play_next_song();
-			if(kv_music_switch_method == Play_Randomly); play_random_song();
-			if(kv_music_switch_method == Play_Repeatly); play_same_song();
+			if(kv_music_switch_method == Play_In_Order) play_next_song();
+			if(kv_music_switch_method == Play_Randomly) play_random_song();
+			if(kv_music_switch_method == Play_Repeatly) play_same_song();
 			Music_Status = Song_Prepare;
 		}
 		if(Music_Status == Song_Next)  
@@ -470,6 +470,7 @@ void wav_play_song_task(uint8_t* fname)
 		{
 			play_specific_song(chosen_file_path); 
 			chosen_file_path_free();
+            Music_Status = Song_Prepare;
 		}
 	}
 }
