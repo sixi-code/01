@@ -13,6 +13,7 @@
 #include "variables.h"
 #include "defines.h"
 #include "spectrum_dsp.h"
+#include "file_unit.h"
 
 // WAV控制结构体
 __wavctrl wavctrl;
@@ -468,11 +469,7 @@ void wav_play_song_task(uint8_t* fname)
 		if(Music_Status == Song_File)
 		{
 			play_specific_song(chosen_file_path); 
-			if (chosen_file_path) {
-            free_bsc(chosen_file_path);
-            chosen_file_path = NULL;
-            }
-			Music_Status = Song_Prepare;
+			chosen_file_path_free();
 		}
 	}
 }
