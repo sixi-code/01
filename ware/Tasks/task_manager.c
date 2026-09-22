@@ -32,6 +32,9 @@ static const Task_Registry_t Task_List[] = {
 
 /**
  * @brief 触发任务管理器，更改任务状态
+ * @param task_num 任务编号 (Task_N_xxx)
+ * @param task_action 任务动作 (Task_T_xxx)
+ * @param IsFromISR 是否来自中断上下文
  */
 void Taskmanager_Ctrl(uint8_t task_num, uint8_t task_action, uint8_t IsFromISR)
 {
