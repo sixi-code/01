@@ -10,6 +10,7 @@
 #include "ff.h"			/* Basic definitions of FatFs */
 #include "diskio.h"		/* Declarations FatFs MAI */
 #include "sdio_sdcard.h"
+#include "usbh_fatfs.h"
 #include "malloc.h"       
 #include "FreeRTOS.h"
 #include "task.h"
@@ -27,7 +28,6 @@ DSTATUS disk_status (BYTE pdrv)
 	return 0; // 都不作限制
 }
 
-__weak uint8_t USB_disk_initialize(uint8_t usb_id) {}//TODO: 留空待实现
 /*-----------------------------------------------------------------------*/
 //初始化磁盘驱动
 //pdrv:物理驱动器编号(0~2)
@@ -46,7 +46,6 @@ DSTATUS disk_initialize (BYTE pdrv)
 }
 
 /*-----------------------------------------------------------------------*/
-__weak uint8_t USB_disk_read(uint8_t usb_id, uint8_t *buff, uint32_t sector, uint32_t count) {}//TODO: 留空待实现
 //读取扇区
 //pdrv:物理驱动器编号(0~2)
 //buff:数据缓冲区
@@ -68,7 +67,6 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
 }
 
 /*-----------------------------------------------------------------------*/
-__weak uint8_t USB_disk_write(uint8_t usb_id, const uint8_t *buff, uint32_t sector, uint32_t count) {}//TODO: 留空待实现
 //写入扇区
 //pdrv:物理驱动器编号(0~2)
 //buff:数据缓冲区
@@ -95,7 +93,6 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count)
 #endif
 
 /*-----------------------------------------------------------------------*/
-__weak uint8_t USB_disk_ioctl(uint8_t usb_id, uint8_t cmd, void *buff) {}//TODO: 留空待实现
 //控制磁盘驱动
 //pdrv:物理驱动器编号(0~2)
 //cmd:命令
