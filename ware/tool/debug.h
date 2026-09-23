@@ -3,9 +3,8 @@
 
 #include <stdint.h>
 #include "tsdb_log.h"
-#include "debug_unit.h"   // lvgl_printf (Debug_Mode_LVGL 分支用), 不 include 会隐式声明
-// TODO: USB CDC 模块未建, usb_printf 未实现, usbd_cdc_conf.h 建好后再恢复
-// #include "usbd_cdc_conf.h"
+#include "debug_unit.h"   
+#include "usbd_cdc_conf.h"   
 #include "variables.h"
 #include "defines.h"
 
@@ -16,8 +15,7 @@
             tsdb_printf(format, ##__VA_ARGS__);                         \
             break;                                                      \
         case Debug_Mode_USBD:                                           \
-            /* TODO: usb_printf 未实现, USB CDC 建好后恢复 */            \
-            /* usb_printf(format, ##__VA_ARGS__); */                    \
+            usb_printf(format, ##__VA_ARGS__);                          \
             break;                                                      \
         case Debug_Mode_LVGL:                                           \
             lvgl_printf(format, ##__VA_ARGS__);                         \
