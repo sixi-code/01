@@ -19,6 +19,8 @@ SemaphoreHandle_t xBSCMutex = NULL;//tlsf bsc互斥锁
 SemaphoreHandle_t xCCMMutex = NULL;//tlsf ccm互斥锁
 SemaphoreHandle_t xFDBSemaphore = NULL;//flashdb互斥锁
 SemaphoreHandle_t xTaskManagerSemaphore = NULL;//taskmanager信号量
+SemaphoreHandle_t usb_tx_cplt_sem = NULL; // 发送完成信号量
+SemaphoreHandle_t usb_tx_mutex = NULL;    // 线程安全互斥锁
 EventGroupHandle_t xLcdEventGroup = NULL; // lcd事件组
 
 //freertos所有任务句柄

@@ -5,8 +5,7 @@
 #include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
-// TODO: USB CDC 模块未建, usb_printf 未实现, usbd_cdc_conf.h 建好后再恢复
-// #include "usbd_cdc_conf.h"
+#include "usbd_cdc_conf.h"   
 #include "malloc.h"
 #include "variables.h"
 
@@ -176,8 +175,7 @@ static void tsdb_show_recent_forward(int num, tsdb_out_target_t target)
             lvgl_printf("[%s] %s\n", time_str, records[i].text);
             vTaskDelay(pdMS_TO_TICKS(5));
         } else if (target == TSDB_OUT_USB) {
-            
-            // usb_printf("[%s] %s\r\n", time_str, records[i].text);
+            usb_printf("[%s] %s\r\n", time_str, records[i].text);
             vTaskDelay(pdMS_TO_TICKS(5));
         }
     }

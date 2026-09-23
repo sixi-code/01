@@ -30,6 +30,8 @@ extern SemaphoreHandle_t xBSCMutex; // tlsf互斥锁
 extern SemaphoreHandle_t xCCMMutex; // tlsf互斥锁
 extern SemaphoreHandle_t xFDBSemaphore; // flashdb互斥锁
 extern SemaphoreHandle_t xTaskManagerSemaphore; // taskmanager信号量
+extern SemaphoreHandle_t usb_tx_cplt_sem; // 发送完成信号量
+extern SemaphoreHandle_t usb_tx_mutex;    // 线程安全互斥锁
 extern EventGroupHandle_t xLcdEventGroup; // lcd事件组
 
 // FreeRTOS所有任务句柄
