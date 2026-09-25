@@ -36,6 +36,10 @@
 #define USBH_GMPD       12
 #define USBH_HID        13
 
+//...定义 USB OTG 外设基址 ...//
+#define USB_OTG_HS_PERIPH_BASE  0x40040000UL
+#define USB_OTG_FS_PERIPH_BASE  0x50000000UL
+
 //...定义 Music_Status 状态 (Music 播放状态机) ...//
 #define Music_None     0
 #define Music_Init     1  //外部置位,用于打开MUSIC播放
