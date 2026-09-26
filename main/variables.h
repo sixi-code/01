@@ -107,7 +107,6 @@ extern volatile uint8_t kv_es9018_status;    // ES9018 供电开关 (持久化) 
 extern volatile uint8_t music_bitdepth;      // 音频位深 16/24/32
 extern volatile uint8_t kv_hdp_value;        // 耳机音量 (0-255)
 extern volatile uint8_t kv_spk_value;         // 扬声器音量 (持久化) 0-255
-extern volatile uint8_t kv_es9018_volume;    // ES9018 DAC 音量缓存
 extern volatile ES9018_Config_t kv_es9018_cfg; // ES9018 DAC 配置
 // fontupd.c
 extern volatile uint8_t g_font_update_state;      // 字库更新状态: 0=空闲 1=擦除 2=写入 3=完成 0xFF=错误
