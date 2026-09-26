@@ -8,14 +8,14 @@
 #define PERSIST_LIST \
     KV(kv_hdp0_or_spk1,        uint8_t) \
     KV(kv_hdp_value,           uint8_t) \
-    KV(kv_es9018_volume,       uint8_t) \
     KV(kv_es9018_cfg,  ES9018_Config_t) \
     KV(kv_debug_mode,          uint8_t) \
     KV(kv_brightness,          uint8_t) \
     KV(kv_screen_status,       uint8_t) \
     KV(kv_es9018_status,       uint8_t) \
     KV(kv_max98357_ststus,     uint8_t) \
-    KV(kv_spk_value,           uint8_t)
+    KV(kv_spk_value,           uint8_t) \
+    KV(kv_music_switch_method, uint8_t)
 
 
 // 自动生成索引枚举

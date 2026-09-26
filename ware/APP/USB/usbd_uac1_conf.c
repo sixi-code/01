@@ -14,6 +14,7 @@
 #include "pin_ctrl.h"
 #include "variables.h"
 #include "defines.h"
+#include "kvdb_ctrl.h" /* kvdb_persist_mark / KV_IDX_* */
 
 #define USING_FEEDBACK 1
 
@@ -185,6 +186,31 @@ volatile static bool dma_started = false;  // DMA是否已启动
 volatile static uint32_t free_read_data = 0;// 环形缓冲区中可读数据量
 volatile static uint32_t free_write_data = 0;// 环形缓冲区中可写数据量
 
+// 喇叭模式下的软件音量 放缩
+// 耳机模式不处理 —— 其音量由 ES9018 硬件寄存器控制（basic_task 轮询写入）
+// 样本宽度取自本文件的 I2S 格式配置（编译期确定，不受其它模块改动影响）：16 位 2 字节/样本，24/32 位 4 字节/样本
+static void uac1_apply_spk_volume(uint8_t *buf, uint32_t bytes)
+{
+    uint32_t samples;
+    uint32_t i;
+
+    if (!kv_hdp0_or_spk1) return;
+
+#if AUDIO_SPEAKER_RESOLUTION_BIT == 16
+    int16_t *p = (int16_t *)buf;
+
+    samples = bytes / 2;
+    for (i = 0; i < samples; i++)
+        p[i] = (int16_t)(((int32_t)p[i] * kv_spk_value) >> 8);
+#else
+    int32_t *p = (int32_t *)buf;
+
+    samples = bytes / 4;
+    for (i = 0; i < samples; i++)
+        p[i] = (int32_t)(((int64_t)p[i] * kv_spk_value) >> 8);
+#endif
+}
+
 void uac1_play_song_task(void)
 {
     // 增加状态判断：如果主机尚未打开音频流，则退出并让出CPU
@@ -216,6 +242,7 @@ void uac1_play_song_task(void)
 			if (ring_buf_rd + AUDIO_OUT_PACKET <= AUDIO_BUF_NUM * AUDIO_OUT_PACKET) 
 			{
                 memcpy(uac1_dma_buf1, &uac1_audio_ring_buf[ring_buf_rd], AUDIO_OUT_PACKET);
+                uac1_apply_spk_volume(uac1_dma_buf1, AUDIO_OUT_PACKET);
                 ring_buf_rd += AUDIO_OUT_PACKET;
                 if (ring_buf_rd >= AUDIO_BUF_NUM * AUDIO_OUT_PACKET) {
                     ring_buf_rd = 0;
@@ -226,7 +253,9 @@ void uac1_play_song_task(void)
                 // 需要回绕拷贝
                 uint32_t first_part = AUDIO_BUF_NUM * AUDIO_OUT_PACKET - ring_buf_rd;
                 memcpy(uac1_dma_buf1, &uac1_audio_ring_buf[ring_buf_rd], first_part);
+                uac1_apply_spk_volume(uac1_dma_buf1, first_part);
                 memcpy(&uac1_dma_buf1[first_part], uac1_audio_ring_buf, AUDIO_OUT_PACKET - first_part);
+                uac1_apply_spk_volume(&uac1_dma_buf1[first_part], AUDIO_OUT_PACKET - first_part);
                 ring_buf_rd = AUDIO_OUT_PACKET - first_part;
             }
         } 
@@ -235,6 +264,7 @@ void uac1_play_song_task(void)
 			if (ring_buf_rd + AUDIO_OUT_PACKET <= AUDIO_BUF_NUM * AUDIO_OUT_PACKET) 
 			{
                 memcpy(uac1_dma_buf0, &uac1_audio_ring_buf[ring_buf_rd], AUDIO_OUT_PACKET);
+                uac1_apply_spk_volume(uac1_dma_buf0, AUDIO_OUT_PACKET);
                 ring_buf_rd += AUDIO_OUT_PACKET;
                 if (ring_buf_rd >= AUDIO_BUF_NUM * AUDIO_OUT_PACKET) {
                     ring_buf_rd = 0;
@@ -245,7 +275,9 @@ void uac1_play_song_task(void)
                 // 需要回绕拷贝
                 uint32_t first_part = AUDIO_BUF_NUM * AUDIO_OUT_PACKET - ring_buf_rd;
                 memcpy(uac1_dma_buf0, &uac1_audio_ring_buf[ring_buf_rd], first_part);
+                uac1_apply_spk_volume(uac1_dma_buf0, first_part);
                 memcpy(&uac1_dma_buf0[first_part], uac1_audio_ring_buf, AUDIO_OUT_PACKET - first_part);
+                uac1_apply_spk_volume(&uac1_dma_buf0[first_part], AUDIO_OUT_PACKET - first_part);
                 ring_buf_rd = AUDIO_OUT_PACKET - first_part;
             }
         }
@@ -459,38 +491,52 @@ void audio_v1_init(uint8_t busid, uintptr_t reg_base)
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }
 
+// 主机调音量：USB 侧单位 dB（-127~0），ES9018 侧为 0~255 级（255 最大，每级 0.5dB）
+// 本回调由 usbd_ep0 线程执行（CherryUSB 的 EP0 消息队列深度为 1，必须快速返回），
+// 因此只更新全局缓存并标记持久化，I2C 写入交给 basic_task 轮询
 void usbd_audiov1_set_volume(uint8_t busid, uint8_t ep, uint8_t ch, int volume_db)
 {
     (void)busid;
     (void)ep;
     (void)ch;
-    (void)volume_db;
+
+    if (volume_db > 0) volume_db = 0;
+    if (volume_db < -127) volume_db = -127;
+    kv_hdp_value = (uint8_t)(255 + volume_db * 2);
+    kvdb_persist_mark(KV_IDX_kv_hdp_value);
 }
 
+// 读回当前音量：把 0~255 级换算回 dB
 int usbd_audiov1_get_volume(uint8_t busid, uint8_t ep, uint8_t ch)
 {
     (void)busid;
     (void)ep;
     (void)ch;
 
-    return 0;
+    return ((int)kv_hdp_value - 255) / 2;
 }
 
+// 主机静音：置 DAC 配置的两声道静音位，硬件由 basic_task 轮询里的 ES9018_Update_Register() 写入
 void usbd_audiov1_set_mute(uint8_t busid, uint8_t ep, uint8_t ch, bool mute)
 {
     (void)busid;
     (void)ep;
     (void)ch;
-    (void)mute;
+
+    kv_es9018_cfg.Mute_Ch1 = mute ? 1 : 0;
+    kv_es9018_cfg.Mute_Ch2 = mute ? 1 : 0;
+    ES9018_Set_Config((const ES9018_Config_t *)&kv_es9018_cfg);
+    kvdb_persist_mark(KV_IDX_kv_es9018_cfg);
 }
 
+// 读回静音状态
 bool usbd_audiov1_get_mute(uint8_t busid, uint8_t ep, uint8_t ch)
 {
     (void)busid;
     (void)ep;
     (void)ch;
 
-    return 0;
+    return kv_es9018_cfg.Mute_Ch1 ? true : false;
 }
 
 void usbd_audiov1_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_t **sampling_freq_table)
