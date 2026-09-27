@@ -25,7 +25,7 @@ static const Task_Registry_t Task_List[] = {
     [Task_N_Media]  = { NULL,  "Media_Task",  MEDIA_STACK_SIZE,  MEDIA_PRIO,  &Media_Task_handler,  &Media_Task_Status  },
     [Task_N_Game]   = { NULL,  "Game_Task",  GAME_STACK_SIZE,  GAME_PRIO,  &Game_Task_handler,  &Game_Task_Status  },
     [Task_N_Font]   = { Font_Task,   "Font_Task",   FONT_STACK_SIZE,   FONT_PRIO,   &Font_Task_handler,   &Font_Task_Status   },
-    [Task_N_FileOp] = { NULL, "FileOp_Task", FILEOP_STACK_SIZE, FILEOP_PRIO, &FileOp_Task_handler, &FileOp_Task_Status },
+    [Task_N_FileOp] = { FileOp_Task, "FileOp_Task", FILEOP_STACK_SIZE, FILEOP_PRIO, &FileOp_Task_handler, &FileOp_Task_Status },
 };
 
 #define TASK_NUM_MAX (sizeof(Task_List) / sizeof(Task_List[0]))//任务数量最大值

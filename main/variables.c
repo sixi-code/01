@@ -137,6 +137,15 @@ volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
 //file_unit
 char *current_path = NULL; // 文件浏览器当前路径
 char *chosen_file_path = NULL; // 文件浏览器选中文件的完整路径
+volatile uint8_t g_file_chosen = 0; // 文件被点击待处理标志 0: 无, 1: 有
+
+//fileop_task.c
+volatile uint8_t g_file_op_cmd  = 0;    // 后台文件操作命令 0: 空闲, 1: 复制, 2: 删除
+volatile uint8_t g_file_op_busy = 0;    // 后台文件操作进行中标志 0: 空闲, 1: 进行中
+volatile uint8_t g_file_op_done = 0;    // 后台文件操作完成标志 (UI 读取后清零)
+volatile uint8_t g_file_op_result = 0;  // 后台文件操作结果 0: 成功, 非0: 失败
+char *g_async_src = NULL;              // 异步操作源路径 (UI 申请, 任务释放)
+char *g_async_dst = NULL;              // 异步操作目标路径 (UI 申请, 任务释放)
 
 //status_bar.c
 volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-显示百分比
