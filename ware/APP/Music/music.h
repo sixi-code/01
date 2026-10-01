@@ -19,15 +19,15 @@ typedef __packed struct
 	char *artist_name;       		//歌手名
 	uint8_t file_format;            //音乐文件格式
 
-	uint16_t file_date;             
-    uint16_t file_time;             
+	uint16_t file_date;             //文件日期
+    uint16_t file_time;             //文件时间
 	
-    uint16_t total_sec;
-    uint16_t current_sec;
+    uint16_t total_sec;				//总时长(秒)	
+    uint16_t current_sec;			//当前播放秒数
 	
-    uint32_t bitrate;
-    uint32_t samplerate;
-    uint8_t bit_depth;
+    uint32_t bitrate;				//码率
+    uint32_t samplerate;			//采样率
+    uint8_t bit_depth;				//位深
 } __musicinfo; 
 
 extern __musicctrl music_ctrl;
