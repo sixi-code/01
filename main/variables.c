@@ -165,4 +165,5 @@ volatile uint8_t g_usb_kbd_key = 0;      // 向外发送的键码 (Keycode)
 volatile uint8_t g_usb_kbd_trigger = 0;  // 向外发送状态机: 0=空闲 1=请求按下 2=请求松开
 
 //usb
-volatile uint8_t g_usb_function = 0; // USB功能 (USB_NONE/USBD_*/USBH_*)
+volatile uint8_t g_usb_function = 0; // USB功能 0:无 1:CDC日志 2:CDC调试 3:虚拟U盘 4:解码耳放UAC1 5:解码耳放UAC2 6:电脑副屏 7:模拟手柄 8:模拟键盘 9:模拟鼠标 10:Host串口 11:HostU盘 12:Host手柄 13:Host外设
+volatile uint8_t kv_uac1_enable = 0; // 0=UAC2(默认), 1=UAC1(兼容性模式)

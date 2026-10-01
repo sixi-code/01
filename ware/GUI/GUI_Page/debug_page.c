@@ -1,5 +1,4 @@
 #include "stm32f4xx.h" 
-#include "mem_monitor_page.h"
 #include "lv_port_disp.h"
 #include "page_manager.h"
 #include "malloc.h"

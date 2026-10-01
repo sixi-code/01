@@ -21,20 +21,20 @@
 #define DEV_USB     1
 
 //...定义 USB 功能 (g_usb_function 取值) ...//
-#define USB_NONE        0
-#define USBD_LOG        1
-#define USBD_CMD        2
-#define USBD_MSC        3
-#define USBD_UAC1       4
-#define USBD_UAC2       5
-#define USBD_DISP       6
-#define USBD_GMPD       7
-#define USBD_KBD        8
-#define USBD_MOU        9
-#define USBH_CDC        10
-#define USBH_MSC        11
-#define USBH_GMPD       12
-#define USBH_HID        13
+#define USB_NONE        0 // 无功能
+#define USBD_LOG        1 // USB CDC 日志输出
+#define USBD_CMD        2 // USB CDC CMD调试
+#define USBD_MSC        3 // USB Device 虚拟U盘
+#define USBD_UAC1       4 // USB Device 解码耳放 (UAC1)
+#define USBD_UAC2       5 // USB Device 解码耳放 (UAC2)
+#define USBD_DISP       6 // USB Device 电脑副屏
+#define USBD_GMPD       7 // USB Device 模拟手柄
+#define USBD_KBD        8 // USB Device 模拟键盘
+#define USBD_MOU        9 // USB Device 模拟鼠标
+#define USBH_CDC        10// USB Host 串口助手
+#define USBH_MSC        11// USB Host U盘读取
+#define USBH_GMPD       12// USB Host 模拟手柄
+#define USBH_HID        13// USB Host 外设输入 (键盘/鼠标/手柄)
 
 //...定义 USB OTG 外设基址 ...//
 #define USB_OTG_HS_PERIPH_BASE  0x40040000UL

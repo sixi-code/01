@@ -4,7 +4,6 @@
 #include "stm32f4xx.h"
 
 // 添加需要持久化的参数：KV(变量名, 类型)
-// 注意：仅列出已在 variables.c 中定义的变量；新增变量请同时写入本表（KV_IDX_* 由本表自动生成）
 #define PERSIST_LIST \
     KV(kv_hdp0_or_spk1,        uint8_t) \
     KV(kv_hdp_value,           uint8_t) \
@@ -15,7 +14,8 @@
     KV(kv_es9018_status,       uint8_t) \
     KV(kv_max98357_ststus,     uint8_t) \
     KV(kv_spk_value,           uint8_t) \
-    KV(kv_music_switch_method, uint8_t)
+    KV(kv_music_switch_method, uint8_t) \
+    KV(kv_uac1_enable,         uint8_t)
 
 
 // 自动生成索引枚举

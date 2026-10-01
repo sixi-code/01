@@ -178,5 +178,6 @@ extern volatile uint8_t g_usb_kbd_trigger;  // 向外发送状态机: 0=空闲 1
 
 //usb
 extern volatile uint8_t g_usb_function; // USB功能 (USB_NONE/USBD_*/USBH_*)
+extern volatile uint8_t kv_uac1_enable; // 0=UAC2(默认), 1=UAC1(兼容性模式)
 
 #endif // __VARIABLES_H__
