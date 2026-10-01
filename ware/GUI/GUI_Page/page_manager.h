@@ -21,7 +21,6 @@ typedef struct {
 } Page_Interface_t;
 
 // 页面ID定义 (保持连续，作为数组下标)
-// 页面ID定义 (保持连续，作为数组下标)
 #define PAGE_NONE   	 0
 #define PAGE_START   	 1
 #define PAGE_DESKTOP     2
