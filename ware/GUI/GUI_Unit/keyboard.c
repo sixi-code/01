@@ -9,6 +9,7 @@
 
 #define CAND_NUM 7 // 候选词数量
 #define PY_BUF_MAX 16 // 拼音输入缓冲区最大长度
+#define KB_CATCHER_TOP 30 // 点击捕获层避开顶部导航栏(240x30), 让返回/最小化/关闭在键盘展开时也能一次点到
 
 // 输入法模式
 typedef enum
@@ -381,8 +382,8 @@ static void kb_event_cb(lv_event_t * e)
 
 /***********************
  * 内部统一创建逻辑
-  * @param ta: 关联的文本区域对象
-  * @param pure_en: 是否为纯英文模式
+ * @param ta: 关联的文本区域对象
+ * @param pure_en: 是否为纯英文模式
  ***********************/
 static void create_keyboard_internal(lv_obj_t * ta, bool pure_en)
 {
@@ -394,8 +395,8 @@ static void create_keyboard_internal(lv_obj_t * ta, bool pure_en)
         pinyin_buf_init();
 
         click_catcher = lv_obj_create(lv_layer_top());
-        lv_obj_set_size(click_catcher, 240, 240);
-        lv_obj_set_pos(click_catcher, 0, 0);
+        lv_obj_set_size(click_catcher, 240, 240 - KB_CATCHER_TOP);
+        lv_obj_set_pos(click_catcher, 0, KB_CATCHER_TOP);
         lv_obj_set_style_bg_opa(click_catcher, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_clear_flag(click_catcher, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_border_width(click_catcher, 0, LV_PART_MAIN);
@@ -629,6 +630,15 @@ void Update_Keyboard(void)
             handle_keyboard_input(txt, true);
         }
     }
+}
+
+/***********************
+ * 对外接口4: 关闭(隐藏)软键盘并解除与文本框的绑定
+ * 文本框即将被删除(如切换页面/切换视图)前必须先调用, 否则键盘会持有已释放的文本框指针
+ ***********************/
+void Close_Keyboard(void)
+{
+    close_keyboard_internal();
 }
 
 /***********************

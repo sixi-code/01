@@ -20,6 +20,11 @@
 #define DEV_SD      0
 #define DEV_USB     1
 
+//定义 后台文件操作结果 (g_file_op_result 取值)
+#define FILEOP_RES_OK    0 // 成功
+#define FILEOP_RES_FAIL  1 // 失败
+#define FILEOP_RES_NO_SD 2 // SD卡不可用 (没插卡, 或卷被 USB 虚拟U盘占用)
+
 //...定义 USB 功能 (g_usb_function 取值) ...//
 #define USB_NONE        0 // 无功能
 #define USBD_LOG        1 // USB CDC 日志输出

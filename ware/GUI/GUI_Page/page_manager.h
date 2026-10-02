@@ -18,6 +18,7 @@ typedef struct {
     void (*init)(void);     // 创建页面UI
     void (*update)(void);   // 刷新页面数据
     void (*exit)(void);     // 销毁页面对象
+    bool (*can_exit)(void); // 离开前询问: 返回 false 则本次切换被拦下(页面自行处理, 如确认未保存的内容), 可为 NULL
 } Page_Interface_t;
 
 // 页面ID定义 (保持连续，作为数组下标)

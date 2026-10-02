@@ -108,8 +108,9 @@ void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...)
 void Page_Back(void)
 {
     if (history_count > 0) {
-        history_count--;
-        next_page_id = page_history_stack[history_count];
+        // 这里只"看一眼"栈顶, 真正弹栈留到 Page_Manager_Loop 里切换真的发生时做
+        // (页面可以在切换前拦下并取消本次切换, 那时返回链不能被白白吃掉)
+        next_page_id = page_history_stack[history_count - 1];
         is_back_action = true; 
     } else if (current_page_id > PAGE_DESKTOP) {
         next_page_id = PAGE_DESKTOP;
@@ -144,7 +145,17 @@ void Page_Manager_Loop(void)
     uint32_t target_next_id = next_page_id;// 读取目标页面ID
     bool current_is_back = is_back_action;// 读取是否是后退操作
 
-    if (current_page_id != target_next_id)// 如果当前页面ID与目标页面ID不同，则进行切换
+    // 切换前先询问当前页面是否允许离开(例如未保存的内容需要用户确认)
+    // 被拦下时本帧不切换, 但仍继续执行下面的刷新逻辑, 让页面自己把确认弹窗处理完
+    bool allow_switch = true;
+    if (current_page_id != target_next_id) {
+        const Page_Interface_t* leaving_page = Page_Get_Interface(current_page_id);
+        if (leaving_page && leaving_page->can_exit && !leaving_page->can_exit()) {
+            allow_switch = false;
+        }
+    }
+
+    if (allow_switch && current_page_id != target_next_id)// 如果当前页面ID与目标页面ID不同，则进行切换
     {
         // 历史记录逻辑
         if (!current_is_back) {
@@ -155,6 +166,8 @@ void Page_Manager_Loop(void)
             } else {
                 history_count = 0; // 回到桌面/启动页清空栈
             }
+        } else if (history_count > 0) {
+            history_count--; // 后退: Page_Back 只看了栈顶, 到这里才真的弹栈
         }
         
         is_back_action = false;

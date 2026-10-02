@@ -29,10 +29,17 @@ void Remove_NOTE_Page(void)
 	Remove_Status_Bar();
 }
 
+// 离开本页面前询问: 记事本有未保存的改动时先弹确认框, 拦下本次页面切换
+bool Can_Exit_NOTE_Page(void)
+{
+	return Note_Unit_Can_Exit();
+}
+
 // 导出页面接口
 const Page_Interface_t page_note_interface = {
     .id = PAGE_NOTE,
     .init = Create_NOTE_Page,
     .update = Update_NOTE_Page,
     .exit = Remove_NOTE_Page,
+    .can_exit = Can_Exit_NOTE_Page,
 };

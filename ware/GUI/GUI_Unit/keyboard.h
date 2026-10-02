@@ -6,6 +6,7 @@
 void Create_Keyboard(lv_obj_t * ta);
 void Create_Keyboard_EN(lv_obj_t * ta);
 void Update_Keyboard(void);
+void Close_Keyboard(void);
 void Remove_Keyboard(void);
 
 #endif
