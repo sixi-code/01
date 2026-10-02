@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include "malloc.h"
 #include "file_page.h"
+#include "album_page.h"
 #include "music_page.h"
 #include "debug_page.h"
 #include "usb_page.h"
@@ -32,6 +33,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_MUSIC]      = &page_music_interface,
     [PAGE_DEBUG]      = &page_debug_interface,
     [PAGE_USB_CTRL]   = &page_usb_interface,
+    [PAGE_ALBUM]      = &page_album_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中

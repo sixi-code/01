@@ -177,21 +177,21 @@ void nes_get_gamepad(void)
 {
     uint8_t key = 0;
 
-    /* ========== 右侧摇杆控制方向 ========== */
-    // 假设 Y轴 >100 为上，<-100 为下
-    if (g_key_R_Y >  80) key |= (1 << 4); // Up     (Bit 4)
-    if (g_key_R_Y < -80) key |= (1 << 5); // Down   (Bit 5)
-    // 假设 X轴 <-100 为左，>100 为右
-    if (g_key_R_X < -80) key |= (1 << 6); // Left   (Bit 6)
-    if (g_key_R_X >  80) key |= (1 << 7); // Right  (Bit 7)
+    /* ========== 左侧摇杆控制方向 ========== */
+    // Y轴向上推为上，向下推为下
+    if (g_key_L_Y >  80) key |= (1 << 4); // Up     (Bit 4)
+    if (g_key_L_Y < -80) key |= (1 << 5); // Down   (Bit 5)
+    // X轴向左推为左，向右推为右
+    if (g_key_L_X < -80) key |= (1 << 6); // Left   (Bit 6)
+    if (g_key_L_X >  80) key |= (1 << 7); // Right  (Bit 7)
 
-    /* ========== 左侧摇杆控制功能键 ========== */
+    /* ========== 右侧摇杆控制功能键 ========== */
     // 向右映射为 A，向左映射为 B
-    if (g_key_L_X < -80) key |= (1 << 0); // A      (Bit 0)
-    if (g_key_L_X >  80) key |= (1 << 1); // B      (Bit 1)
+    if (g_key_R_X < -80) key |= (1 << 0); // A      (Bit 0)
+    if (g_key_R_X >  80) key |= (1 << 1); // B      (Bit 1)
     // 向上映射为 Select，向下映射为 Start
-    if (g_key_L_Y >  80) key |= (1 << 2); // Select (Bit 2)
-    if (g_key_L_Y < -80) key |= (1 << 3); // Start  (Bit 3)
+    if (g_key_R_Y >  80) key |= (1 << 2); // Select (Bit 2)
+    if (g_key_R_Y < -80) key |= (1 << 3); // Start  (Bit 3)
 
     // 将状态赋给全局手柄变量1 (PADdata1留作备用或是2P)
     PADdata = key;

@@ -155,12 +155,12 @@ void usb_display_deinit(void)
 
 void usb_display_task(void)
 {
-    static uint8_t last_L = 0;
+    static uint8_t last_R = 0;
 
-    if (!g_key_L_M_RT && last_L) {
+    if (!g_key_R_M_RT && last_R) {
         g_usb_function = USB_NONE;
     }
-    last_L = g_key_L_M_RT;
+    last_R = g_key_R_M_RT;
 
     struct usbd_display_frame *frame;
     int ret;
