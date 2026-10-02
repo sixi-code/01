@@ -534,6 +534,7 @@ static void create_keyboard_internal(lv_obj_t * ta, bool pure_en)
 
 /***********************
  * 对外接口1: 创建并显示中英双语键盘
+ * @param ta 文本框对象，用于键盘输入
  ***********************/
 void Create_Keyboard(lv_obj_t * ta)
 {
