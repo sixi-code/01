@@ -14,6 +14,7 @@
 #include "debug_page.h"
 #include "usb_page.h"
 #include "settings_page.h"
+#include "mem_monitor_page.h"
 
 // 不受lvgl管理的页面
 static const Page_Interface_t page_game_interface = { .id = PAGE_GAME };
@@ -36,6 +37,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_USB_CTRL]   = &page_usb_interface,
     [PAGE_ALBUM]      = &page_album_interface,
     [PAGE_SETTINGS]   = &page_settings_interface,
+    [PAGE_MEM]        = &page_mem_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
