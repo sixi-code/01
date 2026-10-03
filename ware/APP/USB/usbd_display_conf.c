@@ -157,7 +157,7 @@ void usb_display_task(void)
 {
     static uint8_t last_R = 0;
 
-    if (!g_key_R_M_RT && last_R) {
+    if (g_key_R_M_RT && !last_R) { // 右摇杆刚按下(按下沿)退出 USB 显示模式
         g_usb_function = USB_NONE;
     }
     last_R = g_key_R_M_RT;

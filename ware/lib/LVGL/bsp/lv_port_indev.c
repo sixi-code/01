@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "variables.h"
 #include <stdlib.h>
+#include "page_manager.h"
 
 #define HOR_RES      240  /* 屏幕宽度 */
 #define VER_RES      240  /* 屏幕高度 */
@@ -48,7 +49,7 @@ static void mouse_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     if (g_lvgl_input_disabled)// 如果LVGL输入被禁用，则不更新鼠标位置和状态 
 	{
 		static uint8_t last_L = 0;// 记录上一次左摇杆按下状态
-        if (last_L && !g_key_L_M_RT) // 左摇杆由松开->按下(刚刚按下)时唤醒输入
+        if (!last_L && g_key_L_M_RT) // 左摇杆由松开->按下(刚刚按下)时唤醒输入
 		{
             g_lvgl_input_disabled = 0;// 启用LVGL输入
 			last_L = 0;// 更新上一次左摇杆状态为按下
@@ -96,14 +97,10 @@ static void mouse_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 
     /* --------- 3. 其他物理按键的辅助功能 --------- */
 	static uint8_t last_R = 0;
-	if(!g_key_R_M_RT && last_R)
+	if(g_key_R_M_RT && !last_R) // 右摇杆刚按下(按下沿)触发，返回上一页
 	{
-		/* 
-            返回上一页
-		    Page_Back();函数待实现
-            TODO
-        */
-        }
+		Page_Back();
+    }
 	last_R = g_key_R_M_RT;
 
     /* --------- 4. 实时更新屏幕上的鼠标小黑点 --------- */

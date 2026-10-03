@@ -40,7 +40,7 @@ void Media_Task( void * pvParameters )
         chosen_file_path_free();
         while (!res)
         {
-            if (!g_key_R_M_RT && last_R) break;
+            if (g_key_R_M_RT && !last_R) break; // 右摇杆刚按下(按下沿)即退出播放
             last_R = g_key_R_M_RT;
             res = video_mjpeg_play_task();
         }
@@ -52,7 +52,7 @@ void Media_Task( void * pvParameters )
         chosen_file_path_free();
         while (!res)
         {
-            if (!g_key_R_M_RT && last_R) break;
+            if (g_key_R_M_RT && !last_R) break; // 右摇杆刚按下(按下沿)即退出播放
             last_R = g_key_R_M_RT;
             res = video_play_task();
         }
@@ -64,7 +64,7 @@ void Media_Task( void * pvParameters )
         chosen_file_path_free();
         while (!res)
         {
-            if (!g_key_R_M_RT && last_R) break;
+            if (g_key_R_M_RT && !last_R) break; // 右摇杆刚按下(按下沿)即退出播放
             last_R = g_key_R_M_RT;
             res = video_avi_play_task();
         }
@@ -85,7 +85,7 @@ void Media_Task( void * pvParameters )
 
         while (!res)
         {
-            if (!g_key_R_M_RT && last_R) break;
+            if (g_key_R_M_RT && !last_R) break; // 右摇杆刚按下(按下沿)即退出播放
             last_R = g_key_R_M_RT;
             Delay_ms(20);
         }
@@ -96,7 +96,7 @@ void Media_Task( void * pvParameters )
         chosen_file_path_free();
         while (!res)
         {
-            if (!g_key_R_M_RT && last_R) break;
+            if (g_key_R_M_RT && !last_R) break; // 右摇杆刚按下(按下沿)即退出播放
             last_R = g_key_R_M_RT;
             res = Decode_GIF_Task();
         }
