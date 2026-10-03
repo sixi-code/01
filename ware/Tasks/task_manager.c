@@ -20,7 +20,7 @@ typedef struct {
 static const Task_Registry_t Task_List[] = {
     [Task_N_Basic]  = { Basic_Task, "Basic_Task", BASIC_STACK_SIZE, BASIC_PRIO, &Basic_Task_handler, &Basic_Task_Status },
     [Task_N_LVGL]   = { Lvgl_Task,  "LVGL_Task",  LVGL_STACK_SIZE,  LVGL_PRIO,  &Lvgl_Task_handler,  &LVGL_Task_Status  },
-    [Task_N_USB]    = { NULL,   "USB_Task",   USB_STACK_SIZE,   USB_PRIO,   &USB_Task_handler,   &USB_Task_Status   },
+    [Task_N_USB]    = { USB_Task,   "USB_Task",   USB_STACK_SIZE,   USB_PRIO,   &USB_Task_handler,   &USB_Task_Status   },
     [Task_N_Music]  = { Music_Task, "Music_Task", MUSIC_STACK_SIZE, MUSIC_PRIO, &Music_Task_handler, &Music_Task_Status },
     [Task_N_Media]  = { Media_Task,  "Media_Task",  MEDIA_STACK_SIZE,  MEDIA_PRIO,  &Media_Task_handler,  &Media_Task_Status  },
     [Task_N_Game]   = { NULL,  "Game_Task",  GAME_STACK_SIZE,  GAME_PRIO,  &Game_Task_handler,  &Game_Task_Status  },
