@@ -135,7 +135,7 @@ volatile uint8_t g_usb_mouse_btn = 0; // USB鼠标按键状态
 volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
 
 //file_unit
-char *current_path = NULL; // 文件浏览器当前路径
+char *current_path = NULL; // 文件管理器当前路径 / 记事本编辑页的入口笔记名
 char *chosen_file_path = NULL; // 文件浏览器选中文件的完整路径
 volatile uint8_t g_file_chosen = 0; // 文件被点击待处理标志 0: 无, 1: 有
 

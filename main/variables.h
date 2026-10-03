@@ -146,8 +146,8 @@ extern volatile uint8_t g_usb_mouse_btn; // USB鼠标按键状态
 //debug.c
 extern volatile uint8_t kv_debug_mode; // 调试输出模式 (Debug_Mode_None/TSDB/USBD/LVGL)
 
-//file_unit
-extern char *current_path; // 文件浏览器当前路径
+//file_unit / note_edit_unit (记事本编辑页入口传参与文件管理器共用)
+extern char *current_path; // 文件管理器当前路径 / 记事本编辑页的入口笔记名
 extern char *chosen_file_path; // 文件浏览器选中文件的完整路径
 extern volatile uint8_t g_file_chosen; // 文件被点击待处理标志 0: 无, 1: 有
 

@@ -7,8 +7,10 @@
 #include "variables.h"
 #include "task_manager.h"
 #include "file_unit.h"
-#include "note_unit.h"
 #include "malloc.h"
+
+// 记事本写文本文件入口 (实现在 note_edit_unit.c)
+extern int do_write_text(const char * path, const char * text);
 
 void FileOp_Task(void *pvParameters)
 {

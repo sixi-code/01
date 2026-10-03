@@ -51,7 +51,8 @@ typedef struct {
 #define PAGE_ALBUM       26
 #define PAGE_FONT_UPDATE 27
 #define PAGE_SERIAL      28
-#define PAGE_MAX_ID      29
+#define PAGE_NOTE_EDIT   29
+#define PAGE_MAX_ID      30
 
 // 历史记录栈深度
 #define PAGE_HISTORY_MAX_DEPTH 6
@@ -68,7 +69,7 @@ void Page_Manager_Deinit(void);
 void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...);
 
 // 核心宏：通过在参数末尾追加 NULL，巧妙解决 1个 或 2个 参数的重载问题
-// 用于请求切换页面，path 参数仅在 PAGE_FILE 页面时有效
+// 用于请求切换页面，path 参数仅在 PAGE_FILE (目录路径) / PAGE_NOTE_EDIT (笔记名) 页面时有效
 #define Page_Request_Switch(...) _Page_Request_Switch_Impl(__VA_ARGS__, NULL)
 
 // 后退与历史管理函数

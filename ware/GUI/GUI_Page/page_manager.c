@@ -15,7 +15,8 @@
 #include "usb_page.h"
 #include "settings_page.h"
 #include "mem_monitor_page.h"
-#include "note_page.h"
+#include "note_list_page.h"
+#include "note_edit_page.h"
 
 // 不受lvgl管理的页面
 static const Page_Interface_t page_game_interface = { .id = PAGE_GAME };
@@ -39,7 +40,8 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_ALBUM]      = &page_album_interface,
     [PAGE_SETTINGS]   = &page_settings_interface,
     [PAGE_MEM]        = &page_mem_interface,
-    [PAGE_NOTE]       = &page_note_interface,
+    [PAGE_NOTE]       = &page_note_list_interface,
+    [PAGE_NOTE_EDIT]  = &page_note_edit_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
@@ -88,12 +90,13 @@ void Page_Manager_Init(void)
 void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...)
 {
     if (Page_Get_Interface(new_page_id) != NULL) {
-        if (new_page_id == PAGE_FILE) {
-            if (current_path == NULL) 
+        // PAGE_FILE 传目录路径, PAGE_NOTE_EDIT 传笔记名, 都经由 current_path 交给目标页面
+        if (new_page_id == PAGE_FILE || new_page_id == PAGE_NOTE_EDIT) {
+            if (current_path == NULL)
 			{
 				current_path = malloc_bsc(256);
 			}
-            if (current_path) 
+            if (current_path)
 			{
                 strncpy(current_path, path ? path : "", 255);
                 current_path[255] = '\0';

@@ -25,6 +25,14 @@
 #define FILEOP_RES_FAIL  1 // 失败
 #define FILEOP_RES_NO_SD 2 // SD卡不可用 (没插卡, 或卷被 USB 虚拟U盘占用)
 
+//定义 记事本 (note_list_unit / note_edit_unit 共用)
+#define NOTE_DIR_PATH  "0:/Note"   // 笔记目录
+#define NOTE_EXT       ".txt"      // 笔记后缀 (用它区分哪些文件是笔记)
+#define NOTE_NAME_MAX  255         // 笔记名最大字节数 (不含后缀, 与 FatFs 长名上限 FF_MAX_LFN 对齐)
+#define NOTE_PATH_MAX  272         // 完整路径缓冲区大小 (目录 8 + 名 255 + 后缀 4 + 结尾 1, 取整)
+// 笔记文件字节上限: UTF-8 BOM(3) + 正文 1024 字符×3B(UTF-8) + 每个换行多出来的 '\r'
+#define NOTE_FILE_MAX  (3 + 1024 * 3 + 1024)
+
 //...定义 USB 功能 (g_usb_function 取值) ...//
 #define USB_NONE        0 // 无功能
 #define USBD_LOG        1 // USB CDC 日志输出
