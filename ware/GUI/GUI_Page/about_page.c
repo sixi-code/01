@@ -1,0 +1,40 @@
+#include "about_unit.h"
+#include "page_manager.h"
+#include "navigation_bar.h"
+#include "status_bar.h"
+
+
+
+void Create_About_Page(void)
+{   
+    Create_About_Unit();
+    Create_Navigation_Bar("关于");
+	Create_Status_Bar();
+}
+
+void Update_About_Page(void)
+{
+    Update_About_Unit();
+    Update_Status_Bar();
+    Update_Navigation_Bar();
+}
+void Remove_About_Page(void)
+{
+    Remove_About_Unit();
+    Remove_Navigation_Bar();
+    Remove_Status_Bar();
+}
+
+
+
+// 导出页面接口
+const Page_Interface_t page_about_interface = {
+    .id = PAGE_ABOUT,
+    .init = Create_About_Page,
+    .update = Update_About_Page,
+    .exit = Remove_About_Page,
+};
+
+
+
+
