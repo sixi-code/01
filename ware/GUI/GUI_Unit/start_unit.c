@@ -45,7 +45,7 @@ void Create_Start_Unit(void)
     lv_obj_set_style_text_font(rtc_label_3, &lv_font_56, 0);
     lv_obj_align(rtc_label_3, LV_ALIGN_TOP_MID, 0, 30);
     lv_obj_set_style_text_color(rtc_label_3, lv_color_hex(0xFFB3B3), 0);
-    lv_label_set_text_fmt(rtc_label_3, "%02d:%02d", now_time.RTC_Hours, now_time.RTC_Minutes);
+    lv_label_set_text_fmt(rtc_label_3, "%02d:%02d", now_time_disp.RTC_Hours, now_time_disp.RTC_Minutes);
 
     /* --------- 3. 创建时钟日期 (中层) --------- */
     rtc_label_4 = lv_label_create(lv_scr_act());
@@ -68,11 +68,11 @@ void Update_Start_Unit(void)
     {
         static uint8_t last_min = 0;
         static uint8_t last_apm = 2;
-        if(now_time.RTC_Minutes != last_min || RTC_HFmt != last_apm)
+        if(now_time_disp.RTC_Minutes != last_min || RTC_HFmt != last_apm)
         {
-            last_min = now_time.RTC_Minutes;
+            last_min = now_time_disp.RTC_Minutes;
             last_apm = RTC_HFmt;
-            lv_label_set_text_fmt(rtc_label_3, "%02d:%02d", now_time.RTC_Hours, now_time.RTC_Minutes);
+            lv_label_set_text_fmt(rtc_label_3, "%02d:%02d", now_time_disp.RTC_Hours, now_time_disp.RTC_Minutes);
         }
     }
 

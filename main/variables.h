@@ -59,7 +59,8 @@ extern volatile uint8_t g_key_L_M_RT; // 0: 左摇杆未在中间位置, 1: 左�
 extern volatile uint8_t g_key_R_M_RT; // 0: 右摇杆未在中间位置, 1: 右摇杆在中间位置
 // rng.c
 extern RTC_DateTypeDef now_date; // 当前日期 (RTC)
-extern RTC_TimeTypeDef now_time; // 当前时间 (RTC)
+extern RTC_TimeTypeDef now_time; // 当前时间 (RTC) 始终为硬件原始 24 小时值
+extern RTC_TimeTypeDef now_time_disp; // 时间显示副本 (RTC) 12小时制模式时为换算值
 //lcd_pwm.c
 extern volatile uint8_t g_pwm_inited; // PWM是否初始化完成标志 0：未初始化，1：已初始化
 extern volatile uint8_t kv_screen_status; // 屏幕背光开关 (持久化) 0：关闭，1：开启
@@ -86,16 +87,7 @@ extern volatile uint8_t g_TFcard_inited; // TF卡初始化标志 0=未初始化 
 extern volatile uint32_t RTOS_OK; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
 extern volatile uint8_t RTC_HFmt;  //0-24 1-12
-extern volatile uint8_t RTC_Week;  //1-7
-extern volatile uint8_t RTC_Year;  //0-99
-extern volatile uint8_t RTC_Moth;  //1-12
-extern volatile uint8_t RTC_Date;  //1-31
-extern volatile uint8_t RTC_Hour;  //0-24
-extern volatile uint8_t RTC_Mint;  //0-60
-extern volatile uint8_t RTC_Secd;  //0-60
 
-extern RTC_DateTypeDef now_date; //RTC_WeekDay  RTC_Month  RTC_Date  RTC_Year
-extern RTC_TimeTypeDef now_time; //RTC_Hours  RTC_Minutes  RTC_Seconds  RTC_H12
 extern Lunar_t now_lunar; //农历
 
 //lcd_bsp.c

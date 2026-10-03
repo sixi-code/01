@@ -47,8 +47,11 @@ volatile uint8_t g_key_L_M_RT = 0; // 0: 左摇杆未在中间位置, 1: 左摇�
 volatile uint8_t g_key_R_M_RT = 0; // 0: 右摇杆未在中间位置, 1: 右摇杆在中间位置
 volatile uint8_t g_key_WKP_RT = 0; // 0: 唤醒按键未按下, 1: 唤醒按键已按下
 //rng.c
-RTC_DateTypeDef now_date; // 当前日期 (RTC)
-RTC_TimeTypeDef now_time; // 当前时间 (RTC)
+// 结构体字段顺序: RTC_WeekDay, RTC_Month, RTC_Date, RTC_Year —— 静态初值仅作 RTC 首次上电配置兜底
+RTC_DateTypeDef now_date = {7, 8, 30, 27}; // 当前日期 (RTC) 星期7 月8 日30 年27
+// 结构体字段顺序: RTC_Hours, RTC_Minutes, RTC_Seconds, RTC_H12
+RTC_TimeTypeDef now_time = {16, 0, 0, 0}; // 当前时间 (RTC) 16:00:00 24小时制
+RTC_TimeTypeDef now_time_disp = {16, 0, 0, 0}; // 时间显示副本 12小时制模式(RTC_HFmt=1)时存放换算值，否则与 now_time 相同
 //lcd_pwm.c
 volatile uint8_t g_pwm_inited = 0; // LCD PWM是否初始化完成标志 0：未初始化，1：已初始化
 volatile uint8_t kv_screen_status = 0; // 屏幕背光开关 (持久化) 0：关闭，1：开启
@@ -76,13 +79,6 @@ volatile float g_battery_voltage = 0.0f; // 电池电压 (单位: V)
 volatile uint32_t RTOS_OK = 0; // FreeRTOS调度器状态 0：未启动，1：已启动
 //rtc_clock.h
 volatile uint8_t RTC_HFmt = 0;  //0-24 1-12 时间格式 1：12小时制 0：24小时制
-volatile uint8_t RTC_Week = 7;  //1-7 星期
-volatile uint8_t RTC_Year = 27; //0-99 年
-volatile uint8_t RTC_Moth = 8;  //1-12 月
-volatile uint8_t RTC_Date = 30; //1-31 日
-volatile uint8_t RTC_Hour = 16; //0-24 小时
-volatile uint8_t RTC_Mint = 00; //0-60 分钟
-volatile uint8_t RTC_Secd = 0;  //0-60 秒
 
 Lunar_t now_lunar; //农历
 

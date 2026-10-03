@@ -37,13 +37,13 @@ static void Update_Right_Area(void)
         // 24小时制：日期在上，时间在下
         lv_label_set_text_fmt(rtc_label_1, "%02d.%02d.%02d\n%02d:%02d:%02d",
             now_date.RTC_Year, now_date.RTC_Month, now_date.RTC_Date,
-            now_time.RTC_Hours, now_time.RTC_Minutes, now_time.RTC_Seconds);
+            now_time_disp.RTC_Hours, now_time_disp.RTC_Minutes, now_time_disp.RTC_Seconds);
     } else if (right_display_mode == 1) {
         // 12小时制：日期在上，时间在下
-        const char *ampm = (now_time.RTC_H12 == 0x00) ? "AM" : "PM";
+        const char *ampm = (now_time_disp.RTC_H12 == 0x00) ? "AM" : "PM";
         lv_label_set_text_fmt(rtc_label_1, "%02d.%02d.%02d\n%02d:%02d:%02d%s",
             now_date.RTC_Year, now_date.RTC_Month, now_date.RTC_Date,
-            now_time.RTC_Hours, now_time.RTC_Minutes, now_time.RTC_Seconds, ampm);
+            now_time_disp.RTC_Hours, now_time_disp.RTC_Minutes, now_time_disp.RTC_Seconds, ampm);
     } else if (right_display_mode == 2) {
         // CPU 和 RAM 显示
         mem_monitor_t mon;

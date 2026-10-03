@@ -7,11 +7,7 @@
 #include "rtc_clock.h"
 #include "page_manager.h"
 #include "variables.h"
-#include "malloc.h" 
-
-// 引入外部 STM32 标准库的时间结构体
-extern RTC_DateTypeDef now_date;
-extern RTC_TimeTypeDef now_time;
+#include "malloc.h"
 
 static lv_obj_t * time_set_cont = NULL;
 
@@ -103,15 +99,7 @@ static void btn_save_event_cb(lv_event_t * e)
     now_time.RTC_Minutes = lv_roller_get_selected(roller_minute);
     now_time.RTC_Seconds = lv_roller_get_selected(roller_second);
 
-    // 更新全局变量
-    RTC_Year = now_date.RTC_Year;
-    RTC_Moth = now_date.RTC_Month;
-    RTC_Date = now_date.RTC_Date;
-    RTC_Hour = now_time.RTC_Hours;
-    RTC_Mint = now_time.RTC_Minutes;
-    RTC_Secd = now_time.RTC_Seconds;
-
-    // 调用底层更新 RTC 时间（注意：RTC_Set_Clock 内部需确保把 now_date/now_time 写进硬件寄存器）
+    // 调用底层更新 RTC 时间（RTC_Set_Clock 直接读取 now_date/now_time 写进硬件寄存器）
     RTC_Set_Clock();
 }
 

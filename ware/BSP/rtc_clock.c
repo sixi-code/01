@@ -20,28 +20,15 @@ static void Convert24To12(uint8_t *hour24, uint8_t *am_pm)
 	else {*hour24 = *hour24 - 12;*am_pm = 1;}
 }
 
-//设置RTC时间
+//设置RTC时间（取值来源: now_time 结构体）
 static void RTC_Set_Time(void)
 {
-	RTC_TimeTypeDef RTC_TimeTypeInitStructure;
-	
-	RTC_TimeTypeInitStructure.RTC_Hours   = RTC_Hour;
-	RTC_TimeTypeInitStructure.RTC_Minutes = RTC_Mint;
-	RTC_TimeTypeInitStructure.RTC_Seconds = RTC_Secd;
-	
-	err_flag = RTC_SetTime(RTC_Format_BIN,&RTC_TimeTypeInitStructure) ? 0 : 1;
+	err_flag = RTC_SetTime(RTC_Format_BIN,&now_time) ? 0 : 1;
 }
 
-//设置RTC日期
+//设置RTC日期（取值来源: now_date 结构体）
 static void RTC_Set_Date(void){
-	RTC_DateTypeDef RTC_DateTypeInitStructure;
-	
-	RTC_DateTypeInitStructure.RTC_Date    = RTC_Date;
-	RTC_DateTypeInitStructure.RTC_Month   = RTC_Moth;
-	RTC_DateTypeInitStructure.RTC_WeekDay = RTC_Week;
-	RTC_DateTypeInitStructure.RTC_Year    = RTC_Year;
-	
-	err_flag = RTC_SetDate(RTC_Format_BIN,&RTC_DateTypeInitStructure) ? 0 : 1;
+	err_flag = RTC_SetDate(RTC_Format_BIN,&now_date) ? 0 : 1;
 }
 //配置RTC时钟
 uint8_t RTC_Set_Clock(void)
@@ -73,8 +60,10 @@ uint8_t RTC_Clock_Update(void)
 
 	RTC_GetDate(RTC_Format_BIN, &now_date);
     RTC_GetTime(RTC_Format_BIN, &now_time);
-	
-	if(RTC_HFmt) Convert24To12(&now_time.RTC_Hours,&now_time.RTC_H12);
+
+	// 12小时制换算只作用于显示副本，now_time 始终保持硬件原始 24 小时值
+	now_time_disp = now_time;
+	if(RTC_HFmt) Convert24To12(&now_time_disp.RTC_Hours,&now_time_disp.RTC_H12);
 	
 	now_solar.date = now_date.RTC_Date;
 	now_solar.month = now_date.RTC_Month;
