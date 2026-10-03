@@ -19,6 +19,8 @@
 #include "note_edit_page.h"
 #include "about_page.h"
 #include "time_set_page.h"
+#include "key_test_page.h"
+
 
 // 不受lvgl管理的页面
 static const Page_Interface_t page_game_interface = { .id = PAGE_GAME };
@@ -46,6 +48,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_NOTE_EDIT]  = &page_note_edit_interface,
     [PAGE_ABOUT]      = &page_about_interface,
     [PAGE_TIME_SET]   = &page_time_set_interface,
+    [PAGE_KEY_TEST]   = &page_key_test_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
