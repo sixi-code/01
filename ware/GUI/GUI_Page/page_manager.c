@@ -21,6 +21,7 @@
 #include "time_set_page.h"
 #include "key_test_page.h"
 #include "log_ctrl_page.h"
+#include "es9018_page.h"
 
 
 // 不受lvgl管理的页面
@@ -51,6 +52,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_TIME_SET]   = &page_time_set_interface,
     [PAGE_KEY_TEST]   = &page_key_test_interface,
     [PAGE_LOG_CTRL]   = &page_log_ctrl_interface,
+    [PAGE_ES9018]     = &page_es9018_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
