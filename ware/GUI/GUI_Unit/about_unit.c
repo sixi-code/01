@@ -9,7 +9,8 @@
 #include "page_manager.h"
 #include "variables.h"
 
-extern const lv_img_dsc_t brahma_icon; //120*20
+extern const lv_img_dsc_t brahman_icon;      //142*22，含 1px 透明边距
+extern const lv_img_dsc_t brahman_icon_edge; //142*22，与字面同画布的描边环
 
 // 本地静态指针，用于管理该页面的容器生命周期
 static lv_obj_t * about_cont = NULL;
@@ -60,12 +61,18 @@ void Create_About_Unit(void)
     lv_obj_set_style_bg_color(about_cont, lv_color_hex(0xFFFFFF), 0);
     lv_obj_clear_flag(about_cont, LV_OBJ_FLAG_SCROLLABLE);
 
-    // 靠上居中显示 brahma_icon，颜色设置为 9b95c9
+    // 品牌标识：描边环与字面是两张同画布(142*22)的 1bit 掩膜，故共用同一个对齐偏移即可精确套合
+    lv_obj_t * img_edge = lv_img_create(about_cont);
+    lv_img_set_src(img_edge, &brahman_icon_edge);
+    lv_obj_align(img_edge, LV_ALIGN_TOP_MID, 0, 9);
+    lv_obj_set_style_img_recolor(img_edge, lv_color_hex(0x0B2A5A), 0); // 描边染成深蓝
+    lv_obj_set_style_img_recolor_opa(img_edge, 255, 0);
+
+    // 字面叠在描边之上，染成纯金色
     lv_obj_t * img_icon = lv_img_create(about_cont);
-    lv_img_set_src(img_icon, &brahma_icon);
-    lv_obj_align(img_icon, LV_ALIGN_TOP_MID, 0, 10);
-    // 针对 LV_IMG_CF_ALPHA_1BIT，使用图片重新着色功能
-    lv_obj_set_style_img_recolor(img_icon, lv_color_hex(0x9B95C9), 0);
+    lv_img_set_src(img_icon, &brahman_icon);
+    lv_obj_align(img_icon, LV_ALIGN_TOP_MID, 0, 9);
+    lv_obj_set_style_img_recolor(img_icon, lv_color_hex(0xFFD900), 0);
     lv_obj_set_style_img_recolor_opa(img_icon, 255, 0);
 
     // 读取STM32F4芯片的96位唯一ID
@@ -90,7 +97,7 @@ void Create_About_Unit(void)
     sprintf(id_str, "#808080 设备ID:# #000000 %08X%s#", (unsigned int)cpuid_hex, lot_str);
 
     // 逐行创建文本，行距20像素、间隙4像素统一节奏，上下边距各10像素对称
-    create_info_row(about_cont, 34,  "#808080 设备名称:# #000000 Brahma#");
+    create_info_row(about_cont, 34,  "#808080 设备名称:# #000000 Brahman#");
     create_info_row(about_cont, 54,  id_str);
     create_info_row(about_cont, 74,  "#808080 处理器:# #000000 STM32F405RGT6#");
     create_info_row(about_cont, 94, "#808080 运行内存:# #000000 192KB# #808080 板载储存:# #000000 16MB#");
