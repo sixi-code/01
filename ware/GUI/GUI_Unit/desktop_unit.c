@@ -40,11 +40,11 @@ static void app_icon_event_cb(lv_event_t * e)
             case 0:  Page_Request_Switch(PAGE_MEM); break; //app_task_manager
 			case 1:  Page_Request_Switch(PAGE_MUSIC);break; //app_music
 			case 2:  Page_Request_Switch(PAGE_USB_CTRL);break; //app_usb
-			case 3:  Page_Request_Switch(PAGE_NOTE);break; //app_note
+			case 3:  Page_Request_Switch(PAGE_NOTE_LIST);break; //app_note: 先进笔记列表
 			case 4:  Page_Request_Switch(PAGE_FILE, "0:/MEDIA"); break; //app_video
 			case 5:  Page_Request_Switch(PAGE_FILE, "0:/GAME"); break;  //app_game
 			case 6:  Page_Request_Switch(PAGE_SETTINGS);break; //app_setting 
-			case 7:  Page_Request_Switch(PAGE_CANVAS);break;
+			case 7:  Page_Request_Switch(PAGE_CANVAS_LIST);break; //app_canvas: 先进画作列表
 			case 8:  Page_Request_Switch(PAGE_FILE);break; //app_file_manager
 			case 9:  Page_Request_Switch(PAGE_CLOCK);break; //app_clock
 			case 10: Page_Request_Switch(PAGE_CALENDAR);break;
@@ -101,7 +101,7 @@ void Create_Desktop_Unit(void)
         &app_task_manager, // 0: PAGE_MEM
         &app_music,        // 1: PAGE_MUSIC
         &app_usb,          // 2: PAGE_USB_CTRL
-        &app_note,         // 3: PAGE_NOTE
+        &app_note,         // 3: PAGE_NOTE_LIST
         &app_video,        // 4: Task_N_Media
         &app_game,         // 5: Task_N_Game
         &app_setting,      // 6: PAGE_SETTINGS

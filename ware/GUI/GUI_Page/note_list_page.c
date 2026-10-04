@@ -29,7 +29,7 @@ void Remove_NOTE_List_Page(void)
 
 // 导出页面接口
 const Page_Interface_t page_note_list_interface = {
-    .id = PAGE_NOTE,
+    .id = PAGE_NOTE_LIST,
     .init = Create_NOTE_List_Page,
     .update = Update_NOTE_List_Page,
     .exit = Remove_NOTE_List_Page,

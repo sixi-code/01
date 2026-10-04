@@ -4,10 +4,11 @@
 #include "variables.h"
 #include "defines.h"
 #include "keyboard.h"
+#include "list_unit.h"
 #include "malloc.h"
 #include "page_manager.h"
 #include "ff.h"
-#include "note_edit_unit.h"
+#include "note_unit.h"
 
 // 「还没保存」确认框是否在等答复
 #define NOTE_ASK_NONE  0 // 无
@@ -34,10 +35,6 @@ enum {
 // 写文件时带上的 UTF-8 BOM
 static const uint8_t NOTE_BOM[3] = {0xEF, 0xBB, 0xBF};
 
-// 列表组件提供的公共界面控件构造函数
-extern lv_obj_t * Note_Create_Btn(lv_obj_t * parent, const char * txt, int32_t w, int32_t h);
-extern lv_obj_t * Note_Create_Dlg(int32_t y_ofs, int32_t height);
-
 // 编辑状态
 typedef struct {
 	lv_obj_t * cont;         // 页面主容器
@@ -52,9 +49,9 @@ typedef struct {
 	uint8_t    ask;          // 确认框是否在等"离开本页"的答复 NOTE_ASK_*
 	uint8_t    exit_ok;      // 是否放行页面切换
 	uint8_t    save_pending; // 写盘已交给后台任务, 正在等它完成
-} note_edit_state_t;
+} note_state_t;
 
-static note_edit_state_t *ns = NULL;
+static note_state_t *ns = NULL;
 
 // 内部函数声明
 static void note_ta_event_cb(lv_event_t * e);
@@ -71,7 +68,7 @@ static void note_save_err(uint8_t res);
 static void note_trim(char * s);
 static uint8_t note_check_name(const char * name);
 static uint8_t note_fr_to_result(FRESULT res);
-void Note_Build_Path(char * out, const char * name);
+static void Note_Build_Path(char * out, const char * name);
 int do_write_text(const char * path, const char * text);
 static uint8_t note_submit_save(const char * name);
 static void note_load_from_file(void);
@@ -118,8 +115,8 @@ static uint8_t note_check_name(const char * name)
 	return NOTE_NAME_OK;
 }
 
-// 拼出某个笔记名对应的完整路径 (note_list_unit 也通过 extern 使用)
-void Note_Build_Path(char * out, const char * name)
+// 拼出某个笔记名对应的完整路径
+static void Note_Build_Path(char * out, const char * name)
 {
 	sprintf(out, "%s/%s%s", NOTE_DIR_PATH, name, NOTE_EXT);
 }
@@ -328,22 +325,17 @@ static uint8_t note_submit_save(const char * name)
 	return FILEOP_RES_OK;
 }
 
-void Create_Note_Edit_Unit(void)
+void Create_Note_Unit(void)
 {
 	if (ns != NULL) return;
 
-	ns = (note_edit_state_t *)malloc_ccm(sizeof(note_edit_state_t));
+	ns = (note_state_t *)malloc_ccm(sizeof(note_state_t));
 	if (!ns) return;
-	memset(ns, 0, sizeof(note_edit_state_t));
+	memset(ns, 0, sizeof(note_state_t));
 
-	// 从入口参数缓冲区取要编辑的笔记名 (与文件管理器共用 current_path), 空串表示新建
-	if (current_path != NULL) {
-		strncpy(ns->name, current_path, NOTE_NAME_MAX);
-		ns->name[NOTE_NAME_MAX] = '\0';
-		current_path[0] = '\0';// 取完即清, 免得之后文件管理器误当成浏览路径
-	} else {
-		ns->name[0] = '\0';
-	}
+	// 取列表页传过来的笔记名, 空串表示新建 (缓冲区申请失败时按新建处理)
+	strncpy(ns->name, page_pick_name ? page_pick_name : "", NOTE_NAME_MAX);
+	ns->name[NOTE_NAME_MAX] = '\0';
 
 	init_custom_styles();
 
@@ -356,7 +348,7 @@ void Create_Note_Edit_Unit(void)
 	lv_obj_set_style_bg_color(ns->cont, lv_color_hex(0xE8E8E8), LV_PART_MAIN);
 
 	// 顶栏: 列表 / 当前笔记名
-	lv_obj_t * btn_list = Note_Create_Btn(ns->cont, "列表", 56, 24);
+	lv_obj_t * btn_list = List_Create_Btn(ns->cont, "列表", 56, 24);
 	lv_obj_align(btn_list, LV_ALIGN_TOP_LEFT, 10, 2);
 	lv_obj_add_event_cb(btn_list, note_list_btn_event_cb, LV_EVENT_CLICKED, NULL);
 
@@ -388,7 +380,7 @@ void Create_Note_Edit_Unit(void)
 	lv_obj_add_state(ns->ta_note, LV_STATE_FOCUSED);
 }
 
-void Update_Note_Edit_Unit(void)
+void Update_Note_Unit(void)
 {
 	if (ns == NULL) return;
 
@@ -405,7 +397,7 @@ void Update_Note_Edit_Unit(void)
 	Update_Keyboard();
 }
 
-void Remove_Note_Edit_Unit(void)
+void Remove_Note_Unit(void)
 {
 	if (ns == NULL) return;
 
@@ -416,10 +408,10 @@ void Remove_Note_Edit_Unit(void)
 		lv_obj_del(ns->cont);
 	}
 
-	// 入口参数缓冲区用完了, 还给内存池 (与文件管理器退出时的做法一致)
-	if (current_path != NULL) {
-		free_bsc(current_path);
-		current_path = NULL;
+	// 列表页传过来的名字用完了, 还给内存池 (与文件管理器退出时释放 current_path 同一约定)
+	if (page_pick_name != NULL) {
+		free_bsc(page_pick_name);
+		page_pick_name = NULL;
 	}
 
 	free_ccm(ns);
@@ -427,7 +419,7 @@ void Remove_Note_Edit_Unit(void)
 }
 
 // 页面切换前的询问: 有未保存改动就弹确认框并拦下切换
-bool Note_Edit_Unit_Can_Exit(void)
+bool Note_Unit_Can_Exit(void)
 {
 	if (ns == NULL) return true;
 	if (!ns->dirty || ns->exit_ok) return true;
@@ -560,7 +552,7 @@ static void note_open_name_dlg(void)
 {
 	note_close_dlg();
 
-	ns->dlg = Note_Create_Dlg(30, 86);
+	ns->dlg = List_Create_Dlg(30, 86);
 
 	// 平时显示标题, 出错时显示红色提示
 	ns->dlg_msg = lv_label_create(ns->dlg);
@@ -579,11 +571,11 @@ static void note_open_name_dlg(void)
 	lv_obj_set_style_pad_all(ns->dlg_ta, 2, LV_PART_MAIN);
 	if (ns->name[0] != '\0') lv_textarea_set_text(ns->dlg_ta, ns->name);// 已有名字就预填
 
-	lv_obj_t * btn_cancel = Note_Create_Btn(ns->dlg, "取消", 60, 26);
+	lv_obj_t * btn_cancel = List_Create_Btn(ns->dlg, "取消", 60, 26);
 	lv_obj_align(btn_cancel, LV_ALIGN_TOP_LEFT, 10, 56);
 	lv_obj_add_event_cb(btn_cancel, note_name_dlg_cancel_cb, LV_EVENT_CLICKED, NULL);
 
-	lv_obj_t * btn_ok = Note_Create_Btn(ns->dlg, "确定", 60, 26);
+	lv_obj_t * btn_ok = List_Create_Btn(ns->dlg, "确定", 60, 26);
 	lv_obj_align(btn_ok, LV_ALIGN_TOP_RIGHT, -10, 56);
 	lv_obj_add_event_cb(btn_ok, note_name_dlg_ok_cb, LV_EVENT_CLICKED, NULL);
 
@@ -596,7 +588,7 @@ static void note_open_ask_dlg(void)
 {
 	note_close_dlg();
 
-	ns->dlg = Note_Create_Dlg(30, 94);
+	ns->dlg = List_Create_Dlg(30, 94);
 
 	ns->dlg_msg = lv_label_create(ns->dlg);
 	lv_label_set_text(ns->dlg_msg, "这篇笔记还没保存\n要保存吗?");
@@ -605,15 +597,15 @@ static void note_open_ask_dlg(void)
 	lv_obj_set_width(ns->dlg_msg, 216);
 	lv_obj_align(ns->dlg_msg, LV_ALIGN_TOP_MID, 0, 12);
 
-	lv_obj_t * btn_save = Note_Create_Btn(ns->dlg, "保存", 68, 26);
+	lv_obj_t * btn_save = List_Create_Btn(ns->dlg, "保存", 68, 26);
 	lv_obj_align(btn_save, LV_ALIGN_TOP_LEFT, 8, 58);
 	lv_obj_add_event_cb(btn_save, note_ask_dlg_event_cb, LV_EVENT_CLICKED, (void *)(intptr_t)NOTE_CHOICE_SAVE);
 
-	lv_obj_t * btn_drop = Note_Create_Btn(ns->dlg, "不保存", 68, 26);
+	lv_obj_t * btn_drop = List_Create_Btn(ns->dlg, "不保存", 68, 26);
 	lv_obj_align(btn_drop, LV_ALIGN_TOP_LEFT, 86, 58);
 	lv_obj_add_event_cb(btn_drop, note_ask_dlg_event_cb, LV_EVENT_CLICKED, (void *)(intptr_t)NOTE_CHOICE_DROP);
 
-	lv_obj_t * btn_stay = Note_Create_Btn(ns->dlg, "取消", 68, 26);
+	lv_obj_t * btn_stay = List_Create_Btn(ns->dlg, "取消", 68, 26);
 	lv_obj_align(btn_stay, LV_ALIGN_TOP_LEFT, 164, 58);
 	lv_obj_add_event_cb(btn_stay, note_ask_dlg_event_cb, LV_EVENT_CLICKED, (void *)(intptr_t)NOTE_CHOICE_STAY);
 

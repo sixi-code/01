@@ -25,13 +25,23 @@
 #define FILEOP_RES_FAIL  1 // 失败
 #define FILEOP_RES_NO_SD 2 // SD卡不可用 (没插卡, 或卷被 USB 虚拟U盘占用)
 
-//定义 记事本 (note_list_unit / note_edit_unit 共用)
+//定义 记事本 (note_list_unit / note_unit 共用)
 #define NOTE_DIR_PATH  "0:/Note"   // 笔记目录
 #define NOTE_EXT       ".txt"      // 笔记后缀 (用它区分哪些文件是笔记)
 #define NOTE_NAME_MAX  255         // 笔记名最大字节数 (不含后缀, 与 FatFs 长名上限 FF_MAX_LFN 对齐)
 #define NOTE_PATH_MAX  272         // 完整路径缓冲区大小 (目录 8 + 名 255 + 后缀 4 + 结尾 1, 取整)
 // 笔记文件字节上限: UTF-8 BOM(3) + 正文 1024 字符×3B(UTF-8) + 每个换行多出来的 '\r'
 #define NOTE_FILE_MAX  (3 + 1024 * 3 + 1024)
+
+//定义 画板 (canvas_unit / canvas_list_unit 共用)
+#define CANVAS_WIDTH    40            // 画布像素宽
+#define CANVAS_HEIGHT   40            // 画布像素高
+#define CANVAS_DIR_PATH "0:/Canvas"   // 画作目录
+#define CANVAS_EXT      ".bmp"        // 画作后缀 (用它区分哪些文件是画作)
+#define CANVAS_NAME_MAX 48            // 画作名最大字节数 (不含后缀)
+#define CANVAS_PATH_MAX 64            // 完整路径缓冲区大小 (目录 10 + 名 48 + 后缀 4 + 结尾 1, 取整)
+// 画作位图固定大小: 文件头 14 + 信息头 40 + 每行补齐到 4 字节后的 24 位像素数据
+#define CANVAS_FILE_MAX (14 + 40 + (((CANVAS_WIDTH * 3) + 3) & ~3) * CANVAS_HEIGHT)
 
 //...定义 USB 功能 (g_usb_function 取值) ...//
 #define USB_NONE        0 // 无功能

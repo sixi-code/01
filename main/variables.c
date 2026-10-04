@@ -131,7 +131,7 @@ volatile uint8_t g_usb_mouse_btn = 0; // USB鼠标按键状态
 volatile uint8_t kv_debug_mode = Debug_Mode_None; // 调试输出模式
 
 //file_unit
-char *current_path = NULL; // 文件管理器当前路径 / 记事本编辑页的入口笔记名
+char *current_path = NULL; // 文件管理器当前浏览目录
 char *chosen_file_path = NULL; // 文件浏览器选中文件的完整路径
 volatile uint8_t g_file_chosen = 0; // 文件被点击待处理标志 0: 无, 1: 有
 
@@ -142,6 +142,9 @@ volatile uint8_t g_file_op_done = 0;    // 后台文件操作完成标志 (UI �
 volatile uint8_t g_file_op_result = 0;  // 后台文件操作结果 (FILEOP_RES_OK / FAIL / NO_SD)
 char *g_async_src = NULL;              // 异步操作源路径 (UI 申请, 任务释放)
 char *g_async_dst = NULL;              // 异步操作目标路径 / 写文本文件时的正文 (UI 申请, 任务释放)
+
+//page_manager.c
+char *page_pick_name = NULL; // 列表页->编辑页 传递的条目名 (page_manager 按需申请; 页面只读, 别释放)
 
 //status_bar.c
 volatile uint8_t g_VorP = 0; // 状态栏电池区显示模式 0-显示电压 1-显示百分比

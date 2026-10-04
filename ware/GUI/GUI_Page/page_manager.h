@@ -51,8 +51,9 @@ typedef struct {
 #define PAGE_ALBUM       26
 #define PAGE_FONT_UPDATE 27
 #define PAGE_SERIAL      28
-#define PAGE_NOTE_EDIT   29
-#define PAGE_MAX_ID      30
+#define PAGE_NOTE_LIST   29
+#define PAGE_CANVAS_LIST 30
+#define PAGE_MAX_ID      31
 
 // 历史记录栈深度
 #define PAGE_HISTORY_MAX_DEPTH 6
@@ -69,8 +70,11 @@ void Page_Manager_Deinit(void);
 void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...);
 
 // 核心宏：通过在参数末尾追加 NULL，巧妙解决 1个 或 2个 参数的重载问题
-// 用于请求切换页面，path 参数仅在 PAGE_FILE (目录路径) / PAGE_NOTE_EDIT (笔记名) 页面时有效
+// 用于请求切换页面，path 参数仅在 PAGE_FILE (目录路径) / PAGE_NOTE 与 PAGE_CANVAS (条目名) 页面时有效
 #define Page_Request_Switch(...) _Page_Request_Switch_Impl(__VA_ARGS__, NULL)
+
+// 列表页 -> 编辑页 传递"选中条目名"的变量 (定义在 variables.c, 与 current_path 并列):
+// 由本模块的 page_arg_set() 按需申请并填充, 页面侧只读取(不要改写, 也不要释放)
 
 // 后退与历史管理函数
 void Page_Back(void);

@@ -16,13 +16,15 @@
 #include "settings_page.h"
 #include "mem_monitor_page.h"
 #include "note_list_page.h"
-#include "note_edit_page.h"
+#include "note_page.h"
 #include "about_page.h"
 #include "time_set_page.h"
 #include "key_test_page.h"
 #include "log_ctrl_page.h"
 #include "es9018_page.h"
 #include "text_page.h"
+#include "canvas_page.h"
+#include "canvas_list_page.h"
 
 
 // 不受lvgl管理的页面
@@ -47,14 +49,16 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_ALBUM]      = &page_album_interface,
     [PAGE_SETTINGS]   = &page_settings_interface,
     [PAGE_MEM]        = &page_mem_interface,
-    [PAGE_NOTE]       = &page_note_list_interface,
-    [PAGE_NOTE_EDIT]  = &page_note_edit_interface,
+    [PAGE_NOTE]       = &page_note_interface,
+    [PAGE_NOTE_LIST]  = &page_note_list_interface,
     [PAGE_ABOUT]      = &page_about_interface,
     [PAGE_TIME_SET]   = &page_time_set_interface,
     [PAGE_KEY_TEST]   = &page_key_test_interface,
     [PAGE_LOG_CTRL]   = &page_log_ctrl_interface,
     [PAGE_ES9018]     = &page_es9018_interface,
     [PAGE_TEXT]       = &page_text_interface,
+    [PAGE_CANVAS]     = &page_canvas_interface,
+    [PAGE_CANVAS_LIST]= &page_canvas_list_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
@@ -62,6 +66,22 @@ static Page_State_t page_states[PAGE_MAX_ID] = {PAGE_STATE_UNINIT};// 初始化�
 
 static volatile uint32_t current_page_id = PAGE_NONE;// 当前页面ID
 static volatile uint32_t next_page_id = PAGE_START;// 下一个页面ID
+
+// 页面传参缓冲区大小 (current_path 与 page_pick_name 共用)
+#define PAGE_ARG_BUF_MAX 256
+
+// 页面传参缓冲区的统一分配/填充: 首次用到才申请, 之后复用同一块
+// (current_path 与 page_pick_name 都定义在 variables.c, 由本函数统一分配)
+static void page_arg_set(char ** buf, const char * src)
+{
+    if (*buf == NULL) {
+        *buf = (char *)malloc_bsc(PAGE_ARG_BUF_MAX);
+    }
+    if (*buf == NULL) return;// 申请失败就保持 NULL, 由页面按"空名"处理
+
+    strncpy(*buf, src ? src : "", PAGE_ARG_BUF_MAX - 1);
+    (*buf)[PAGE_ARG_BUF_MAX - 1] = '\0';
+}
 
 // 历史记录相关变量
 static volatile uint32_t page_history_stack[PAGE_HISTORY_MAX_DEPTH];// 历史记录栈
@@ -103,17 +123,12 @@ void Page_Manager_Init(void)
 void _Page_Request_Switch_Impl(uint32_t new_page_id, const char *path, ...)
 {
     if (Page_Get_Interface(new_page_id) != NULL) {
-        // PAGE_FILE 传目录路径, PAGE_NOTE_EDIT 传笔记名, 都经由 current_path 交给目标页面
-        if (new_page_id == PAGE_FILE || new_page_id == PAGE_NOTE_EDIT) {
-            if (current_path == NULL)
-			{
-				current_path = malloc_bsc(256);
-			}
-            if (current_path)
-			{
-                strncpy(current_path, path ? path : "", 255);
-                current_path[255] = '\0';
-            }
+        // 页面传参: PAGE_FILE 传目录路径(文件管理器长期持有 current_path),
+        // PAGE_NOTE / PAGE_CANVAS 传条目名(page_pick_name), 两者共用同一套按需分配
+        if (new_page_id == PAGE_FILE) {
+            page_arg_set(&current_path, path);
+        } else if (new_page_id == PAGE_NOTE || new_page_id == PAGE_CANVAS) {
+            page_arg_set(&page_pick_name, path);
         }
         next_page_id = new_page_id;
         is_back_action = false;
