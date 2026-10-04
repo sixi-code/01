@@ -25,6 +25,8 @@
 #include "text_page.h"
 #include "canvas_page.h"
 #include "canvas_list_page.h"
+#include "clock_page.h"
+#include "calendar_page.h"
 
 
 // 不受lvgl管理的页面
@@ -59,6 +61,8 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_TEXT]       = &page_text_interface,
     [PAGE_CANVAS]     = &page_canvas_interface,
     [PAGE_CANVAS_LIST]= &page_canvas_list_interface,
+    [PAGE_CLOCK]      = &page_clock_interface,
+    [PAGE_CALENDAR]   = &page_calendar_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
