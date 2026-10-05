@@ -24,7 +24,7 @@
 //0x100006C0 64KB - 864*2 byte (ccm池起始地址)
 #define CCM_POOL_ADDR 0x100006C0
 
-#define TLSF_S(x) __attribute__((at(x)))
+#define TLSF_S(x) __attribute__((at(x))) //
 #define TLSF_A(x) __align(x)
 
 TLSF_A(32) TLSF_S(BSC_CTRL_ADDR) uint8_t tlsf_ctrl_bsc[TLSF_CTRL_SIZE];// bsc控制块
