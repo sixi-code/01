@@ -14,7 +14,7 @@
 
 // ===== 初始化配置 ===== 
 #define TLSF_CTRL_SIZE   (864) // TLSF 控制结构体大小
-#define TLSF_BSC_SIZE    (98 * 1024)  // BSC 池大小
+#define TLSF_BSC_SIZE    (97 * 1024)  // BSC 池大小
 #define TLSF_CCM_SIZE    (64 * 1024 - TLSF_CTRL_SIZE * 2) // CCM 池大小 (64KB - 2 * 控制结构体大小)
 
 //0x10000000 864B（bsc控制块 放在ccm中）
