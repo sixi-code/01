@@ -175,4 +175,8 @@ extern volatile uint8_t g_usb_kbd_trigger;  // 向外发送状态机: 0=空闲 1
 extern volatile uint8_t g_usb_function; // USB功能 (USB_NONE/USBD_*/USBH_*)
 extern volatile uint8_t kv_uac1_enable; // 0=UAC2(默认), 1=UAC1(兼容性模式)
 
+//words_unit.c
+extern char kv_words_book[48];            // 上次使用的词书文件名 (持久化, 空串=尚未选过书)
+extern volatile uint32_t kv_words_word_idx; // 上次背到的单词索引 (持久化)
+
 #endif // __VARIABLES_H__

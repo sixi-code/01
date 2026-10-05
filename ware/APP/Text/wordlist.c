@@ -232,6 +232,7 @@ bool wordlist_get_random(wordlist_t *wl, word_item_t *item)
 {
     if (wl == NULL || wl->total_words == 0) return false;
     uint32_t rand_index = rand() % wl->total_words;
+    wl->last_index = rand_index; // 记录本次命中的索引，供调用方定位/持久化
     return wordlist_get_by_index(wl, rand_index, item);
 }
 

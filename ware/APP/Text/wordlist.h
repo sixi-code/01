@@ -18,6 +18,7 @@ typedef struct {
     uint32_t total_words;     // 词库中包含的总单词数
     uint32_t *line_offsets;   // 动态数组：存放每个单词在文件中的偏移量 (Index)
     uint32_t current_index;   // 当前顺序抽取的索引游标
+    uint32_t last_index;      // 最近一次随机抽取命中的索引 (wordlist_get_random 写入, 供调用方定位)
 } wordlist_t;
 
 /**

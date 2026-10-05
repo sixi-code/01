@@ -15,7 +15,9 @@
     KV(kv_max98357_ststus,     uint8_t) \
     KV(kv_spk_value,           uint8_t) \
     KV(kv_music_switch_method, uint8_t) \
-    KV(kv_uac1_enable,         uint8_t)
+    KV(kv_uac1_enable,         uint8_t) \
+    KV(kv_words_book,          char[48]) \
+    KV(kv_words_word_idx,      uint32_t)
 
 
 // 自动生成索引枚举
