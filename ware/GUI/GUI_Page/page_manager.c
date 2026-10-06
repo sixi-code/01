@@ -31,7 +31,7 @@
 #include "calculator_page.h"
 #include "lots_page.h"
 #include "cmd_page.h"
-
+#include "serial_page.h"
 
 // 不受lvgl管理的页面
 static const Page_Interface_t page_game_interface = { .id = PAGE_GAME };
@@ -71,6 +71,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_CALCULATOR] = &page_calculator_interface,
     [PAGE_LOTS]       = &page_lots_interface,
     [PAGE_CMD]        = &page_cmd_interface,
+    [PAGE_SERIAL]     = &page_serial_interface,
 };
 
 // 2. 将状态单独提取出来，放在 SRAM 中
