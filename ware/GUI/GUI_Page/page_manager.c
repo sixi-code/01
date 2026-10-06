@@ -32,6 +32,7 @@
 #include "lots_page.h"
 #include "cmd_page.h"
 #include "serial_page.h"
+#include "font_update_page.h"
 
 // 不受lvgl管理的页面
 static const Page_Interface_t page_game_interface = { .id = PAGE_GAME };
@@ -45,7 +46,7 @@ static const Page_Interface_t* const page_registry[PAGE_MAX_ID] = {
     [PAGE_START]      = &page_start_interface,
     [PAGE_DESKTOP]    = &page_desktop_interface,
     [PAGE_FILE]       = &page_file_interface,
-    [PAGE_FONT_UPDATE]= NULL,
+    [PAGE_FONT_UPDATE]= &page_font_update_interface,
     [PAGE_GAME]       = &page_game_interface,
     [PAGE_MEDIA]      = &page_media_interface,
     [PAGE_DISPLAY]    = &page_display_interface,
